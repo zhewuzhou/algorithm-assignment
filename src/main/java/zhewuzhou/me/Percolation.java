@@ -18,18 +18,21 @@ public class Percolation {
             }
             weightedQuickUnionUF = new WeightedQuickUnionUF(n * n);
         } else {
-            throw new Exception("N must be positive number");
+            throw new IllegalArgumentException("N must be positive number");
         }
     }
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
-        int current = row * width + col;
+        validate(row, col);
+        int rowIndex = row - 1;
+        int colIndex = col - 1;
+        int current = rowIndex * width + colIndex;
         if (!statuses[current]) {
-            int left = getLeftItem(row, col);
-            int right = getRightItem(row, col);
-            int top = getTopItem(row, col);
-            int down = getDownItem(row, col);
+            int left = getLeftItem(rowIndex, colIndex);
+            int right = getRightItem(rowIndex, colIndex);
+            int top = getTopItem(rowIndex, colIndex);
+            int down = getDownItem(rowIndex, colIndex);
 
             statuses[current] = true;
             openCount++;
@@ -43,12 +46,14 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        return statuses[row * width + col];
+        validate(row, col);
+        return statuses[(row - 1) * width + col - 1];
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        int current = row * width + col;
+        validate(row, col);
+        int current = (row - 1) * width + col - 1;
         for (int i = 0; i < width; i++) {
             if (statuses[i]) {
                 if (weightedQuickUnionUF.connected(i, current)) {
@@ -77,6 +82,14 @@ public class Percolation {
     // test client (optional)
     public static void main(String[] args) {
 
+    }
+
+    private void validate(int row, int col) {
+        if (row > 0 && row <= width && col > 0 && col <= width) {
+            System.out.println("Valid row and col");
+        } else {
+            throw new IllegalArgumentException("Row or Col is not valid");
+        }
     }
 
     private void connectNeighbor(int current, int neighbor) {
