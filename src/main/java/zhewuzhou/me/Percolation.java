@@ -85,9 +85,8 @@ public class Percolation {
     }
 
     private void validate(int row, int col) {
-        if (row > 0 && row <= width && col > 0 && col <= width) {
-            System.out.println("Valid row and col");
-        } else {
+        boolean validRowCol = (row > 0 && row <= width && col > 0 && col <= width);
+        if (!validRowCol) {
             throw new IllegalArgumentException("Row or Col is not valid");
         }
     }
