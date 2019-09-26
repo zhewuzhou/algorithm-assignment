@@ -3,7 +3,8 @@ package zhewuzhou.me;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private WeightedQuickUnionUF weightedQuickUnionUF;
+    private WeightedQuickUnionUF virtualTopBottomUF;
+    private WeightedQuickUnionUF virtualTopUF;
     private int width;
     private int openCount = 0;
     private boolean[] statuses;
@@ -12,11 +13,15 @@ public class Percolation {
     public Percolation(int n) throws Exception {
         if (n > 0) {
             width = n;
-            statuses = new boolean[n * n];
-            for (int i = 0; i < n * n - 1; i++) {
+            int square = width * width;
+            statuses = new boolean[square + 2];
+            for (int i = 0; i < square - 1; i++) {
                 statuses[i] = false;
             }
-            weightedQuickUnionUF = new WeightedQuickUnionUF(n * n);
+            statuses[square] = true;
+            statuses[square + 1] = true;
+            virtualTopBottomUF = new WeightedQuickUnionUF(square + 2);
+            virtualTopUF = new WeightedQuickUnionUF(square + 1);
         } else {
             throw new IllegalArgumentException("N must be positive number");
         }
@@ -29,6 +34,12 @@ public class Percolation {
         int colIndex = col - 1;
         int current = rowIndex * width + colIndex;
         if (!statuses[current]) {
+            if (current < width - 1) {
+                connectNeighbor(current, width * width);
+            }
+            if (current >= (width - 1) * width) {
+                connectVirtualBottom(current, width * width + 1);
+            }
             int left = getLeftItem(rowIndex, colIndex);
             int right = getRightItem(rowIndex, colIndex);
             int top = getTopItem(rowIndex, colIndex);
@@ -54,14 +65,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         validate(row, col);
         int current = (row - 1) * width + col - 1;
-        for (int i = 0; i < width; i++) {
-            if (statuses[i]) {
-                if (weightedQuickUnionUF.connected(i, current)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return virtualTopUF.connected(width * width, current);
     }
 
     // returns the number of open sites
@@ -71,12 +75,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        for (int i = 0; i < width; i++) {
-            if (statuses[(width - 1) * width + i] && isFull(width - 1, i)) {
-                return true;
-            }
-        }
-        return false;
+        return virtualTopBottomUF.connected(width * width, width * width + 1);
     }
 
     // test client (optional)
@@ -94,8 +93,13 @@ public class Percolation {
 
     private void connectNeighbor(int current, int neighbor) {
         if (neighbor != -1 && statuses[neighbor]) {
-            weightedQuickUnionUF.union(current, neighbor);
+            virtualTopBottomUF.union(current, neighbor);
+            virtualTopUF.union(current, neighbor);
         }
+    }
+
+    private void connectVirtualBottom(int current, int bottom) {
+        virtualTopBottomUF.union(current, bottom);
     }
 
     private int getDownItem(int row, int col) {
