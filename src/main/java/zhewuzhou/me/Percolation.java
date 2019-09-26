@@ -6,6 +6,7 @@ public class Percolation {
     private WeightedQuickUnionUF virtualTopBottomUF;
     private WeightedQuickUnionUF virtualTopUF;
     private int width;
+    private int square;
     private int openCount = 0;
     private boolean[] statuses;
 
@@ -13,7 +14,7 @@ public class Percolation {
     public Percolation(int n) throws Exception {
         if (n > 0) {
             width = n;
-            int square = width * width;
+            square = width * width;
             statuses = new boolean[square + 2];
             for (int i = 0; i < square - 1; i++) {
                 statuses[i] = false;
@@ -35,10 +36,10 @@ public class Percolation {
         int current = rowIndex * width + colIndex;
         if (!statuses[current]) {
             if (current < width - 1) {
-                connectNeighbor(current, width * width);
+                connectNeighbor(current, square);
             }
             if (current >= (width - 1) * width) {
-                connectVirtualBottom(current, width * width + 1);
+                connectVirtualBottom(current, square + 1);
             }
             int left = getLeftItem(rowIndex, colIndex);
             int right = getRightItem(rowIndex, colIndex);
@@ -65,7 +66,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         validate(row, col);
         int current = (row - 1) * width + col - 1;
-        return virtualTopUF.connected(width * width, current);
+        return virtualTopUF.connected(square, current);
     }
 
     // returns the number of open sites
@@ -75,7 +76,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return virtualTopBottomUF.connected(width * width, width * width + 1);
+        return virtualTopBottomUF.connected(square, square + 1);
     }
 
     // test client (optional)
