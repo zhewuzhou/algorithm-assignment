@@ -33,7 +33,7 @@ public class Percolation {
         validate(row, col);
         int rowIndex = row - 1;
         int colIndex = col - 1;
-        int current = rowIndex * width + colIndex;
+        int current = calculateIndex(rowIndex, colIndex);
         if (!openStatuses[current]) {
             if (rowIndex == 0) {
                 connectNeighbor(current, square);
@@ -54,13 +54,13 @@ public class Percolation {
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         validate(row, col);
-        return openStatuses[(row - 1) * width + col - 1];
+        return openStatuses[calculateIndex(row - 1, col - 1)];
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         validate(row, col);
-        int current = (row - 1) * width + col - 1;
+        int current = calculateIndex(row - 1, col - 1);
         return virtualTopUF.connected(square, current);
     }
 
@@ -97,12 +97,10 @@ public class Percolation {
     }
 
     private int calculateIndex(int row, int col) {
-        return width * (row - 1) + col;
+        return width * row + col;
     }
 
     private boolean isOnGrid(int row, int col) {
-        int shiftRow = row - 1;
-        int shiftCol = col - 1;
-        return (shiftRow >= 0 && shiftCol >= 0 && shiftRow < width && shiftCol < width);
+        return (row >= 0 && col >= 0 && row < width && col < width);
     }
 }
