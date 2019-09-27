@@ -39,19 +39,14 @@ public class Percolation {
                 connectNeighbor(current, square);
             }
             if (current >= (width - 1) * width) {
-                connectVirtualBottom(current, square + 1);
+                virtualTopBottomUF.union(current, square + 1);
             }
-            int left = getLeftItem(rowIndex, colIndex);
-            int right = getRightItem(rowIndex, colIndex);
-            int top = getTopItem(rowIndex, colIndex);
-            int down = getDownItem(rowIndex, colIndex);
-
             statuses[current] = true;
             openCount++;
-            connectNeighbor(current, left);
-            connectNeighbor(current, top);
-            connectNeighbor(current, right);
-            connectNeighbor(current, down);
+            connectNeighbor(current, getLeftItem(rowIndex, colIndex));
+            connectNeighbor(current, getTopItem(rowIndex, colIndex));
+            connectNeighbor(current, getRightItem(rowIndex, colIndex));
+            connectNeighbor(current, getDownItem(rowIndex, colIndex));
         }
     }
 
@@ -96,10 +91,6 @@ public class Percolation {
             virtualTopBottomUF.union(current, neighbor);
             virtualTopUF.union(current, neighbor);
         }
-    }
-
-    private void connectVirtualBottom(int current, int bottom) {
-        virtualTopBottomUF.union(current, bottom);
     }
 
     private int getDownItem(int row, int col) {
