@@ -23,6 +23,8 @@ public class PercolationStats {
         for (int i = 0; i < trials; i++) {
             performIteration(i);
         }
+        this.mean = StdStats.mean(thresholds);
+        this.stddev = StdStats.stddev(thresholds);
     }
 
     // sample mean of percolation threshold
@@ -61,7 +63,5 @@ public class PercolationStats {
             percolation.open(randomRow, randomCol);
         }
         thresholds[i] = percolation.numberOfOpenSites() / (double) (width * width);
-        this.mean = StdStats.mean(thresholds);
-        this.stddev = StdStats.stddev(thresholds);
     }
 }

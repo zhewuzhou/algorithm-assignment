@@ -75,8 +75,7 @@ public class Percolation {
     }
 
     private void validate(int row, int col) {
-        boolean validRowCol = (row > 0 && row <= width && col > 0 && col <= width);
-        if (!validRowCol) {
+        if (!isOnGrid(row - 1, col - 1)) {
             throw new IllegalArgumentException("Row or Col is not valid");
         }
     }
