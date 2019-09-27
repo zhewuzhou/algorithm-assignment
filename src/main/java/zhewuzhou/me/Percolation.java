@@ -11,7 +11,7 @@ public class Percolation {
     private boolean[] openStatuses;
 
     // creates n-by-n grid, with all sites initially blocked
-    public Percolation(int n) throws Exception {
+    public Percolation(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("N must be positive number");
         } else {
