@@ -48,8 +48,8 @@ public class Percolation {
 
             statuses[current] = true;
             openCount++;
-            connectNeighbor(current, top);
             connectNeighbor(current, left);
+            connectNeighbor(current, top);
             connectNeighbor(current, right);
             connectNeighbor(current, down);
         }
