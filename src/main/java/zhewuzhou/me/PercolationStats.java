@@ -6,7 +6,8 @@ import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 
-    public static final double CONFIDENCE_FACTOR = 1.96;
+    private static final double CONFIDENCE_FACTOR = 1.96;
+
     private final int width;
     private double[] thresholds;
     private double mean;
