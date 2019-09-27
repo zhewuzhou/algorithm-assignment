@@ -73,12 +73,7 @@ public class Percolation {
     public boolean percolates() {
         return virtualTopBottomUF.connected(square, square + 1);
     }
-
-    // test client (optional)
-    public static void main(String[] args) {
-
-    }
-
+    
     private void validate(int row, int col) {
         boolean validRowCol = (row > 0 && row <= width && col > 0 && col <= width);
         if (!validRowCol) {
