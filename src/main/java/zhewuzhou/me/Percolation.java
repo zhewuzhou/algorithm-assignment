@@ -8,23 +8,23 @@ public class Percolation {
     private int width;
     private int square;
     private int openCount = 0;
-    private boolean[] statuses;
+    private boolean[] openStatuses;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) throws Exception {
-        if (n > 0) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("N must be positive number");
+        } else {
             width = n;
             square = width * width;
-            statuses = new boolean[square + 2];
+            openStatuses = new boolean[square + 2];
             for (int i = 0; i < square - 1; i++) {
-                statuses[i] = false;
+                openStatuses[i] = false;
             }
-            statuses[square] = true;
-            statuses[square + 1] = true;
+            openStatuses[square] = true;
+            openStatuses[square + 1] = true;
             virtualTopBottomUF = new WeightedQuickUnionUF(square + 2);
             virtualTopUF = new WeightedQuickUnionUF(square + 1);
-        } else {
-            throw new IllegalArgumentException("N must be positive number");
         }
     }
 
@@ -34,14 +34,14 @@ public class Percolation {
         int rowIndex = row - 1;
         int colIndex = col - 1;
         int current = rowIndex * width + colIndex;
-        if (!statuses[current]) {
+        if (!openStatuses[current]) {
             if (current < width - 1) {
                 connectNeighbor(current, square);
             }
             if (current >= (width - 1) * width) {
                 virtualTopBottomUF.union(current, square + 1);
             }
-            statuses[current] = true;
+            openStatuses[current] = true;
             openCount++;
             connectNeighbor(current, getLeftItem(rowIndex, colIndex));
             connectNeighbor(current, getTopItem(rowIndex, colIndex));
@@ -54,7 +54,7 @@ public class Percolation {
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         validate(row, col);
-        return statuses[(row - 1) * width + col - 1];
+        return openStatuses[(row - 1) * width + col - 1];
     }
 
     // is the site (row, col) full?
@@ -87,7 +87,7 @@ public class Percolation {
     }
 
     private void connectNeighbor(int current, int neighbor) {
-        if (neighbor != -1 && statuses[neighbor]) {
+        if (neighbor != -1 && openStatuses[neighbor]) {
             virtualTopBottomUF.union(current, neighbor);
             virtualTopUF.union(current, neighbor);
         }
