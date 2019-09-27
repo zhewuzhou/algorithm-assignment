@@ -7,7 +7,7 @@ public class Percolation {
     private WeightedQuickUnionUF virtualTopUF;
     private int width;
     private int square;
-    private int openCount = 0;
+    private int openSitesCount = 0;
     private boolean[] openStatuses;
 
     // creates n-by-n grid, with all sites initially blocked
@@ -42,11 +42,11 @@ public class Percolation {
                 virtualTopBottomUF.union(current, square + 1);
             }
             openStatuses[current] = true;
-            openCount++;
-            connectNeighbor(current, getLeftItem(rowIndex, colIndex));
-            connectNeighbor(current, getTopItem(rowIndex, colIndex));
-            connectNeighbor(current, getRightItem(rowIndex, colIndex));
-            connectNeighbor(current, getDownItem(rowIndex, colIndex));
+            openSitesCount++;
+            connectNeighbor(current, getNeighborIndex(rowIndex - 1, colIndex));
+            connectNeighbor(current, getNeighborIndex(rowIndex, colIndex - 1));
+            connectNeighbor(current, getNeighborIndex(rowIndex, colIndex + 1));
+            connectNeighbor(current, getNeighborIndex(rowIndex + 1, colIndex));
         }
     }
 
@@ -66,14 +66,14 @@ public class Percolation {
 
     // returns the number of open sites
     public int numberOfOpenSites() {
-        return openCount;
+        return openSitesCount;
     }
 
     // does the system percolate?
     public boolean percolates() {
         return virtualTopBottomUF.connected(square, square + 1);
     }
-    
+
     private void validate(int row, int col) {
         boolean validRowCol = (row > 0 && row <= width && col > 0 && col <= width);
         if (!validRowCol) {
@@ -88,43 +88,21 @@ public class Percolation {
         }
     }
 
-    private int getDownItem(int row, int col) {
-        int down = -1;
-        if (row < width - 1) {
-            down = (row + 1) * width + col;
-        }
-        return down;
-    }
-
-    private int getTopItem(int row, int col) {
-        int top = -1;
-        if (row > 0) {
-            top = (row - 1) * width + col;
-        }
-        return top;
-    }
-
-    private int getRightItem(int row, int col) {
-        int right = -1;
-        if (col == width - 1) {
-            if (row < width - 1) {
-                right = (row + 1) * width;
-            }
+    private int getNeighborIndex(int row, int col) {
+        if (isOnGrid(row, col)) {
+            return calculateIndex(row, col);
         } else {
-            right = row * width + col + 1;
+            return -1;
         }
-        return right;
     }
 
-    private int getLeftItem(int row, int col) {
-        int left = -1;
-        if (col == 0) {
-            if (row > 0) {
-                left = (row - 1) * width - 1;
-            }
-        } else {
-            left = row * width + col - 1;
-        }
-        return left;
+    private int calculateIndex(int row, int col) {
+        return width * (row - 1) + col;
+    }
+
+    private boolean isOnGrid(int row, int col) {
+        int shiftRow = row - 1;
+        int shiftCol = col - 1;
+        return (shiftRow >= 0 && shiftCol >= 0 && shiftRow < width && shiftCol < width);
     }
 }

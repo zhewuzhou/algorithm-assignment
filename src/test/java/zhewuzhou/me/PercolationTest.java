@@ -43,4 +43,13 @@ public class PercolationTest {
 
         assertThat(percolation.isFull(1, 10), is(true));
     }
+
+    @Test
+    public void test_edge_case() {
+        Percolation percolation = new Percolation(3);
+        percolation.open(1, 3);
+        percolation.open(2, 1);
+
+        assertThat(percolation.isFull(2, 1), is(false));
+    }
 }
