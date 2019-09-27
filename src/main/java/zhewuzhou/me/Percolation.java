@@ -35,10 +35,10 @@ public class Percolation {
         int colIndex = col - 1;
         int current = rowIndex * width + colIndex;
         if (!openStatuses[current]) {
-            if (current < width - 1) {
+            if (rowIndex == 0) {
                 connectNeighbor(current, square);
             }
-            if (current >= (width - 1) * width) {
+            if (rowIndex == width - 1) {
                 virtualTopBottomUF.union(current, square + 1);
             }
             openStatuses[current] = true;

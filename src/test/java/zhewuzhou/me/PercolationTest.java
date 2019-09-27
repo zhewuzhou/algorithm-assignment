@@ -3,7 +3,7 @@ package zhewuzhou.me;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class PercolationTest {
     @Test
@@ -35,4 +35,12 @@ public class PercolationTest {
         assertThat(percolation.percolates(), is(true));
     }
 
+    @Test
+    public void should_test_is_full() {
+        Percolation percolation = new Percolation(10);
+
+        percolation.open(1, 10);
+
+        assertThat(percolation.isFull(1, 10), is(true));
+    }
 }
