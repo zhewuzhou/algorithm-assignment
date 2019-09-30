@@ -1,4 +1,4 @@
-package zhewuzhou.me;
+package zhewuzhou.me.week1;
 
 import org.junit.Test;
 
@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 
 public class PercolationStatsTest {
     @Test
-    public void should_calculate_confidence_range_for_given_percolation() throws Exception {
+    public void should_calculate_confidence_range_for_given_percolation() {
         PercolationStats percolationStats = new PercolationStats(100, 100);
 
         assertThat(percolationStats.mean() > 0, is(true));

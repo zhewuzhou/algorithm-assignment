@@ -1,4 +1,4 @@
-package zhewuzhou.me;
+package zhewuzhou.me.week1;
 
 import org.junit.Test;
 
@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 
 public class PercolationTest {
     @Test
-    public void should_open_site() throws Exception {
+    public void should_open_site() {
         Percolation percolation = new Percolation(3);
         percolation.open(1, 2);
         percolation.open(2, 1);
@@ -22,7 +22,7 @@ public class PercolationTest {
     }
 
     @Test
-    public void should_connect_when_open_site() throws Exception {
+    public void should_connect_when_open_site() {
         Percolation percolation = new Percolation(3);
         percolation.open(1, 2);
         percolation.open(2, 1);

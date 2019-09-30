@@ -1,4 +1,4 @@
-package zhewuzhou.me;
+package zhewuzhou.me.week1;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
