@@ -95,6 +95,28 @@ public class Deque<Item> implements Iterable<Item> {
         return new DequeIterator();
     }
 
+    // unit testing (required)
+    public static void main(String[] args) {
+        Deque<Integer> deque = new Deque<Integer>();
+
+        for (int i = 0; i < 1024; i++) {
+            deque.addFirst(i);
+        }
+        for (int j = 1024; j < 2048; j++) {
+            deque.addLast(j);
+        }
+        for (int k = 2048; k < 3096; k++) {
+            deque.addFirst(k);
+        }
+        for (int p = 0; p < 1500; p++) {
+            deque.removeLast();
+        }
+
+        for (int q = 0; q < 1300; q++) {
+            deque.removeFirst();
+        }
+    }
+
     private class DequeIterator implements Iterator<Item> {
         private Node current = first;
 

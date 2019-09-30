@@ -61,6 +61,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return new RandomizedQueueIterator();
     }
 
+    // unit testing (required)
+    public static void main(String[] args) {
+        RandomizedQueue<Integer> queue = new RandomizedQueue<Integer>();
+        for (int i = 0; i < 1024; i++) {
+            queue.enqueue(i);
+        }
+        for (int j = 0; j < 1023; j++) {
+            queue.sample();
+            queue.dequeue();
+        }
+        queue.dequeue();
+        queue.isEmpty();
+    }
+
     private class RandomizedQueueIterator implements Iterator<Item> {
         private Item[] items;
         private int index;
