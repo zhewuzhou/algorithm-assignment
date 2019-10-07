@@ -35,4 +35,21 @@ public class PointTest {
         assertThat(middle.slopeTo(vertical), is(POSITIVE_INFINITY));
         assertThat(middle.slopeTo(horizontal), is(0D));
     }
+
+    @Test
+    public void should_negative_zero() {
+        Point p = new Point(9, 9);
+        Point q = new Point(2, 9);
+
+        assertThat(p.slopeTo(q), is(0.0));
+    }
+
+    @Test
+    public void should_compare_with_comparator() {
+        Point p = new Point(7, 6);
+        Point q = new Point(3, 6);
+        Point r = new Point(8, 6);
+
+        assertThat(p.slopeOrder().compare(q, r), is(0));
+    }
 }
