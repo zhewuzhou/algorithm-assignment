@@ -86,6 +86,7 @@ public class Point implements Comparable<Point> {
      * argument point
      */
     public int compareTo(Point that) {
+        /* YOUR CODE HERE */
         if (this.x == that.x && this.y == that.y) {
             return 0;
         } else {
@@ -106,7 +107,14 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
-        return null;
+        final Point current = this;
+        return new Comparator<Point>() {
+            public int compare(Point p1, Point p2) {
+                double slopeP1 = current.slopeTo(p1);
+                double slopeP2 = current.slopeTo(p2);
+                return Double.compare(slopeP1, slopeP2);
+            }
+        };
     }
 
 
