@@ -1,18 +1,15 @@
 package zhewuzhou.me.week3;
 
-import edu.princeton.cs.algs4.LinkedBag;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class BruteCollinearPointsTest {
-
+public class FastCollinearPointsTest {
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception_when_null_point() {
         Point[] points = new Point[101];
@@ -21,7 +18,7 @@ public class BruteCollinearPointsTest {
         }
         points[100] = null;
 
-        new BruteCollinearPoints(points);
+        new FastCollinearPoints(points);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -32,29 +29,12 @@ public class BruteCollinearPointsTest {
         }
         points[100] = points[50];
 
-        new BruteCollinearPoints(points);
+        new FastCollinearPoints(points);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception_when_array_null() {
-        new BruteCollinearPoints(null);
-    }
-
-    @Test
-    public void should_copy_linked_bag_to_array() {
-        LinkedBag<Integer> integers = new LinkedBag<Integer>();
-        for (int i = 0; i < 100; i++) {
-            integers.add(i);
-        }
-        Integer[] target = new Integer[100];
-
-        Iterator<Integer> iterator = integers.iterator();
-        for (int i = 99; i >= 0; i--) {
-            target[i] = iterator.next();
-        }
-
-        assertThat(target[99], is(99));
-        assertThat(target[0], is(0));
+        new FastCollinearPoints(null);
     }
 
     @Test
@@ -67,9 +47,9 @@ public class BruteCollinearPointsTest {
             }
         }
         Point[] points = container.toArray(new Point[12]);
-        BruteCollinearPoints bruteCollinearPoints = new BruteCollinearPoints(points);
+        FastCollinearPoints fastCollinearPoints = new FastCollinearPoints(points);
 
-        assertThat(bruteCollinearPoints.numberOfSegments(), is(3));
+        assertThat(fastCollinearPoints.numberOfSegments(), is(3));
     }
 
     @Test
@@ -82,8 +62,8 @@ public class BruteCollinearPointsTest {
             }
         }
         Point[] points = container.toArray(new Point[12]);
-        BruteCollinearPoints bruteCollinearPoints = new BruteCollinearPoints(points);
-        LineSegment[] segments = bruteCollinearPoints.segments();
+        FastCollinearPoints fastCollinearPoints = new FastCollinearPoints(points);
+        LineSegment[] segments = fastCollinearPoints.segments();
         List<LineSegment> list = Arrays.asList(segments);
         ArrayList<String> toStrings = new ArrayList<String>();
         for (LineSegment ls : list) {
@@ -92,6 +72,6 @@ public class BruteCollinearPointsTest {
         }
 
 
-        assertThat(bruteCollinearPoints.numberOfSegments(), is(10));
+        assertThat(fastCollinearPoints.numberOfSegments(), is(10));
     }
 }
