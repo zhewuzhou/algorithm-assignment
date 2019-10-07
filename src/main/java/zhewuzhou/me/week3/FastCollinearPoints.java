@@ -9,11 +9,6 @@ public class FastCollinearPoints {
     private ArrayList<LineSegment> segments;
     private Point[] sortedPoints;
 
-    /**
-     * Finds all line segments containing 4 or more points
-     *
-     * @param points {com.assignment3.Point[]}
-     */
     public FastCollinearPoints(Point[] points) {
         Point[] aux = checkInput(points);
 
@@ -23,18 +18,12 @@ public class FastCollinearPoints {
         segments = new ArrayList<LineSegment>();
 
         for (int i = 0; i < len; i++) {
-            addLines(sortedPoints, aux, i);
+            calculateLines(sortedPoints, aux, i);
         }
 
         sortedPoints = null;
     }
 
-    /**
-     * Check input
-     *
-     * @param points {com.assignment3.Point[]}
-     * @return {com.assignment3.Point[]} copy of points
-     */
     private Point[] checkInput(Point[] points) {
         if (points == null) throw new java.lang.IllegalArgumentException();
 
@@ -59,14 +48,7 @@ public class FastCollinearPoints {
         return aux;
     }
 
-    /**
-     * Add collinear lines
-     *
-     * @param points    {com.assignment3.Point[]}
-     * @param aux       {com.assignment3.Point[]}
-     * @param originIdx {int}
-     */
-    private void addLines(Point[] points, Point[] aux, int originIdx) {
+    private void calculateLines(Point[] points, Point[] aux, int originIdx) {
         Point origin = points[originIdx];
         Comparator<Point> cpt = origin.slopeOrder();
         Arrays.sort(aux, cpt); // sort based on slope
@@ -81,20 +63,12 @@ public class FastCollinearPoints {
             }
 
             if (j - start + 1 >= THRESHOLD) {
-                addLine(aux, origin, start, j - 1);
+                calculateLine(aux, origin, start, j - 1);
             }
         }
     }
 
-    /**
-     * Create line segment based on input points
-     *
-     * @param points   {ArrayList()}
-     * @param origin   {com.assignment3.Point}
-     * @param startIdx {int}
-     * @param endIdx   {int}
-     */
-    private void addLine(Point[] points, Point origin, int startIdx, int endIdx) {
+    private void calculateLine(Point[] points, Point origin, int startIdx, int endIdx) {
         Arrays.sort(points, startIdx, endIdx + 1);
         Point p1 = points[startIdx];
         if (origin.compareTo(p1) < 0) { // not added yet
@@ -102,20 +76,10 @@ public class FastCollinearPoints {
         }
     }
 
-    /**
-     * The number of line segments
-     *
-     * @return {int}
-     */
     public int numberOfSegments() {
         return (segments != null) ? segments.size() : 0;
     }
 
-    /**
-     * The line segments
-     *
-     * @return {com.assignment3.LineSegment[]}
-     */
     public LineSegment[] segments() {
         if (segments == null) {
             return new LineSegment[0];
