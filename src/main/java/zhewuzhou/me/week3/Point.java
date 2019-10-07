@@ -135,5 +135,8 @@ public class Point implements Comparable<Point> {
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
+        Point middle = new Point(1, 2);
+        Point normal = new Point(2, 3);
+        middle.slopeTo(normal);
     }
 }
