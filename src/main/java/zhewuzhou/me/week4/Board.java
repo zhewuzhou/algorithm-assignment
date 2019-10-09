@@ -51,7 +51,23 @@ public class Board {
 
     // does this board equal y?
     public boolean equals(Object y) {
-        return false;
+        if (this == y) {
+            return true;
+        }
+
+        if (y == null || !(y instanceof Board) || this.dimension != ((Board) y).dimension) {
+            return false;
+        }
+
+        Board that = (Board) y;
+        for (int i = 0; i < this.dimension; i++) {
+            for (int j = 0; j < this.dimension; j++) {
+                if (this.tiles[i][j] != that.tiles[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // all neighboring boards
@@ -85,7 +101,7 @@ public class Board {
         int[] sequenceArray = new int[dimension * dimension];
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                sequenceArray[i * 3 + j] = tiles[i][j];
+                sequenceArray[i * dimension + j] = tiles[i][j];
             }
         }
         Arrays.sort(sequenceArray);
