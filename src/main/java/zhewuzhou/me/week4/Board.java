@@ -15,12 +15,23 @@ public class Board {
 
     // string representation of this board
     public String toString() {
-        return null;
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.dimension);
+        builder.append("\n");
+        for (int[] line : this.tiles) {
+            builder.append(' ');
+            for (int tile : line) {
+                builder.append(tile);
+                builder.append(' ');
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 
     // board dimension n
     public int dimension() {
-        return 0;
+        return this.dimension;
     }
 
     // number of tiles out of place
@@ -53,10 +64,6 @@ public class Board {
         return null;
     }
 
-    // unit testing (not graded)
-    public static void main(String[] args) {
-    }
-
     private void checkTiles(int[][] tiles) {
         checkNullOrNonSquare(tiles);
         checkContainedTiles(tiles);
@@ -87,5 +94,9 @@ public class Board {
                 throw new IllegalArgumentException();
             }
         }
+    }
+
+    // unit testing (not graded)
+    public static void main(String[] args) {
     }
 }
