@@ -175,6 +175,18 @@ public class BoardTest {
         assertThat(size, is(3));
     }
 
+    @Test
+    public void should_be_able_to_twin() {
+        Board validBoard = createValidBoard(100);
+
+        ArrayList<Board> result = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            result.add(validBoard.twin());
+        }
+
+        assertThat(result.size(), is(10000));
+    }
+
     private Board createValidBoard(int dimension) {
 
         return new Board(calculateTiles(dimension));

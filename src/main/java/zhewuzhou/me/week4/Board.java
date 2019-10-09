@@ -1,5 +1,7 @@
 package zhewuzhou.me.week4;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -89,7 +91,7 @@ public class Board {
 
     private Iterable<Board> calculateNeighbors() {
         if (neighbors == null) {
-            neighbors = new ArrayList<Board>();
+            neighbors = new ArrayList<>();
             for (int i = 0; i < this.dimension; i++) {
                 for (int j = 0; j < this.dimension; j++) {
                     if (tiles[i][j] == SPACE) {
@@ -106,7 +108,18 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        return null;
+        while (true) {
+            int row = StdRandom.uniform(0, dimension);
+            int col = StdRandom.uniform(0, dimension);
+            int targetRow = StdRandom.uniform(0, dimension);
+            int targetCol = StdRandom.uniform(0, dimension);
+            if (tiles[row][col] != SPACE &&
+                tiles[targetRow][targetCol] != SPACE &&
+                tiles[row][col] != tiles[targetRow][targetCol]
+            ) {
+                return createBoard(row, col, targetRow, targetCol);
+            }
+        }
     }
 
 
@@ -116,12 +129,17 @@ public class Board {
 
     private void calculateNeighbor(int row, int col, int targetRow, int targetCol, ArrayList<Board> boards) {
         if (isExist(targetRow, targetCol)) {
-            int[][] targetTiles = copy();
-            int temp = targetTiles[targetRow][targetCol];
-            targetTiles[targetRow][targetCol] = 0;
-            targetTiles[row][col] = temp;
-            boards.add(new Board(targetTiles));
+            Board board = createBoard(row, col, targetRow, targetCol);
+            boards.add(board);
         }
+    }
+
+    private Board createBoard(int row, int col, int targetRow, int targetCol) {
+        int[][] targetTiles = copy();
+        int temp = targetTiles[targetRow][targetCol];
+        targetTiles[targetRow][targetCol] = tiles[row][col];
+        targetTiles[row][col] = temp;
+        return new Board(targetTiles);
     }
 
     private int[][] copy() {
