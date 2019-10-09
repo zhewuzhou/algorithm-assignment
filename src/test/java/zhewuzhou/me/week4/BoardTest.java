@@ -163,6 +163,18 @@ public class BoardTest {
 
     }
 
+    @Test
+    public void should_got_neighbors() {
+        int[][] tilesV1 = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};
+        Board board = new Board(tilesV1);
+        int size = 0;
+        for (Board value : board.neighbors()) {
+            size++;
+        }
+
+        assertThat(size, is(3));
+    }
+
     private Board createValidBoard(int dimension) {
 
         return new Board(calculateTiles(dimension));

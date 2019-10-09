@@ -1,20 +1,22 @@
 package zhewuzhou.me.week4;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
+    private static final int SPACE = 0;
     private int dimension;
     private int[][] tiles;
     private Board perfectBoard;
     private Integer hamming;
     private Integer manhattan;
+    private ArrayList<Board> neighbors;
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         checkTiles(tiles);
     }
-
 
     // string representation of this board
     public String toString() {
@@ -45,18 +47,6 @@ public class Board {
         return this.hamming;
     }
 
-    private void calculateHamming() {
-        this.hamming = 0;
-        Board perfectBoard = this.buildPerfectBoard();
-        for (int i = 0; i < this.dimension; i++) {
-            for (int j = 0; j < this.dimension; j++) {
-                if (tiles[i][j] != perfectBoard.tiles[i][j] && tiles[i][j] != 0) {
-                    this.hamming++;
-                }
-            }
-        }
-    }
-
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
         if (this.manhattan == null) {
@@ -65,25 +55,6 @@ public class Board {
         return this.manhattan;
     }
 
-    private void calculateManhattan() {
-        this.manhattan = 0;
-        Board perfectBoard = this.buildPerfectBoard();
-        for (int i = 0; i < this.dimension; i++) {
-            for (int j = 0; j < this.dimension; j++) {
-                if (tiles[i][j] != perfectBoard.tiles[i][j] && tiles[i][j] != 0) {
-                    this.manhattan = this.manhattan + distance(i, j);
-                }
-            }
-        }
-    }
-
-    private int distance(int i, int j) {
-        int targetRow = ((tiles[i][j] - 1) / this.dimension) - i;
-        int targetColumn = (tiles[i][j] - 1) % this.dimension - j;
-        int vertical = Math.abs(targetRow);
-        int horizontal = Math.abs(targetColumn);
-        return vertical + horizontal;
-    }
 
     // is this board the goal board?
     public boolean isGoal() {
@@ -113,12 +84,61 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return null;
+        return calculateNeighbors();
+    }
+
+    private Iterable<Board> calculateNeighbors() {
+        if (neighbors == null) {
+            neighbors = new ArrayList<Board>();
+            for (int i = 0; i < this.dimension; i++) {
+                for (int j = 0; j < this.dimension; j++) {
+                    if (tiles[i][j] == SPACE) {
+                        calculateNeighbor(i, j, i + 1, j, neighbors);
+                        calculateNeighbor(i, j, i - 1, j, neighbors);
+                        calculateNeighbor(i, j, i, j + 1, neighbors);
+                        calculateNeighbor(i, j, i, j - 1, neighbors);
+                    }
+                }
+            }
+        }
+        return neighbors;
     }
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
         return null;
+    }
+
+
+    // unit testing (not graded)
+    public static void main(String[] args) {
+    }
+
+    private void calculateNeighbor(int row, int col, int targetRow, int targetCol, ArrayList<Board> boards) {
+        if (isExist(targetRow, targetCol)) {
+            int[][] targetTiles = copy();
+            int temp = targetTiles[targetRow][targetCol];
+            targetTiles[targetRow][targetCol] = 0;
+            targetTiles[row][col] = temp;
+            boards.add(new Board(targetTiles));
+        }
+    }
+
+    private int[][] copy() {
+        int[][] targetArray = new int[dimension][dimension];
+        for (int i = 0; i < dimension; i++)
+            for (int j = 0; j < dimension; j++)
+                targetArray[i][j] = tiles[i][j];
+
+        return targetArray;
+    }
+
+    private boolean isExist(int row, int col) {
+        return validPos(row) && validPos(col);
+    }
+
+    private boolean validPos(int pos) {
+        return pos >= 0 && pos < dimension;
     }
 
     private void checkTiles(int[][] tiles) {
@@ -171,7 +191,37 @@ public class Board {
         return perfectBoard;
     }
 
-    // unit testing (not graded)
-    public static void main(String[] args) {
+    private void calculateManhattan() {
+        this.manhattan = 0;
+        Board perfectBoard = this.buildPerfectBoard();
+        for (int i = 0; i < this.dimension; i++) {
+            for (int j = 0; j < this.dimension; j++) {
+                if (tiles[i][j] != perfectBoard.tiles[i][j] && tiles[i][j] != SPACE) {
+                    this.manhattan = this.manhattan + distance(i, j);
+                }
+            }
+        }
     }
+
+    private int distance(int i, int j) {
+        int targetRow = ((tiles[i][j] - 1) / this.dimension) - i;
+        int targetColumn = (tiles[i][j] - 1) % this.dimension - j;
+        int vertical = Math.abs(targetRow);
+        int horizontal = Math.abs(targetColumn);
+        return vertical + horizontal;
+    }
+
+
+    private void calculateHamming() {
+        this.hamming = 0;
+        Board perfectBoard = this.buildPerfectBoard();
+        for (int i = 0; i < this.dimension; i++) {
+            for (int j = 0; j < this.dimension; j++) {
+                if (tiles[i][j] != perfectBoard.tiles[i][j] && tiles[i][j] != SPACE) {
+                    this.hamming++;
+                }
+            }
+        }
+    }
+
 }
