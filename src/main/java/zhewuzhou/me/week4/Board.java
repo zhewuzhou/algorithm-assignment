@@ -89,23 +89,6 @@ public class Board {
         return calculateNeighbors();
     }
 
-    private Iterable<Board> calculateNeighbors() {
-        if (neighbors == null) {
-            neighbors = new ArrayList<>();
-            for (int i = 0; i < this.dimension; i++) {
-                for (int j = 0; j < this.dimension; j++) {
-                    if (tiles[i][j] == SPACE) {
-                        calculateNeighbor(i, j, i + 1, j, neighbors);
-                        calculateNeighbor(i, j, i - 1, j, neighbors);
-                        calculateNeighbor(i, j, i, j + 1, neighbors);
-                        calculateNeighbor(i, j, i, j - 1, neighbors);
-                    }
-                }
-            }
-        }
-        return neighbors;
-    }
-
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
         while (true) {
@@ -133,6 +116,24 @@ public class Board {
             boards.add(board);
         }
     }
+
+    private Iterable<Board> calculateNeighbors() {
+        if (neighbors == null) {
+            neighbors = new ArrayList<>();
+            for (int i = 0; i < this.dimension; i++) {
+                for (int j = 0; j < this.dimension; j++) {
+                    if (tiles[i][j] == SPACE) {
+                        calculateNeighbor(i, j, i + 1, j, neighbors);
+                        calculateNeighbor(i, j, i - 1, j, neighbors);
+                        calculateNeighbor(i, j, i, j + 1, neighbors);
+                        calculateNeighbor(i, j, i, j - 1, neighbors);
+                    }
+                }
+            }
+        }
+        return neighbors;
+    }
+
 
     private Board createBoard(int row, int col, int targetRow, int targetCol) {
         int[][] targetTiles = copy();
