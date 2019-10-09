@@ -1,11 +1,17 @@
 package zhewuzhou.me.week4;
 
+import java.util.Arrays;
+
 public class Board {
+    private int dimension;
+    private int[][] tiles;
+
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
-
+        checkTiles(tiles);
     }
+
 
     // string representation of this board
     public String toString() {
@@ -49,5 +55,37 @@ public class Board {
 
     // unit testing (not graded)
     public static void main(String[] args) {
+    }
+
+    private void checkTiles(int[][] tiles) {
+        checkNullOrNonSquare(tiles);
+        checkContainedTiles(tiles);
+        this.dimension = tiles.length;
+        this.tiles = tiles;
+    }
+
+    private void checkNullOrNonSquare(int[][] tiles) {
+        if (tiles == null) {
+            throw new IllegalArgumentException();
+        }
+        if (tiles.length != tiles[0].length) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void checkContainedTiles(int[][] tiles) {
+        int dimension = tiles.length;
+        int[] sequenceArray = new int[dimension * dimension];
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                sequenceArray[i * 3 + j] = tiles[i][j];
+            }
+        }
+        Arrays.sort(sequenceArray);
+        for (int i = 0; i < dimension * dimension; i++) {
+            if (sequenceArray[i] != i) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 }
