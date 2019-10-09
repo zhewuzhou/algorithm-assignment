@@ -46,7 +46,7 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        return false;
+        return this.equals(buildPerfectBoard(this.dimension));
     }
 
     // does this board equal y?
@@ -110,6 +110,21 @@ public class Board {
                 throw new IllegalArgumentException();
             }
         }
+    }
+
+    private Board buildPerfectBoard(int dimension) {
+        int[][] validArrays = new int[dimension][dimension];
+
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (i == dimension - 1 && j == dimension - 1) {
+                    validArrays[i][j] = 0;
+                } else {
+                    validArrays[i][j] = i * dimension + j + 1;
+                }
+            }
+        }
+        return new Board(validArrays);
     }
 
     // unit testing (not graded)

@@ -102,6 +102,22 @@ public class BoardTest {
         new Board(invalidArrays);
     }
 
+    @Test
+    public void should_be_goal() {
+        assertThat(createValidBoard(10).isGoal(), is(true));
+    }
+
+    @Test
+    public void should_not_be_goal() {
+        int[][] tiles = calculateTiles(10);
+        int temp = tiles[0][0];
+        tiles[0][0] = tiles[9][9];
+        tiles[9][9] = temp;
+        Board perfectBoard = new Board(tiles);
+
+        assertThat(perfectBoard.isGoal(), is(false));
+    }
+
     private Board createValidBoard(int dimension) {
 
         return new Board(calculateTiles(dimension));
@@ -112,7 +128,11 @@ public class BoardTest {
 
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                validArrays[i][j] = i * dimension + j;
+                if (i == dimension - 1 && j == dimension - 1) {
+                    validArrays[i][j] = 0;
+                } else {
+                    validArrays[i][j] = i * dimension + j + 1;
+                }
             }
         }
         return validArrays;
