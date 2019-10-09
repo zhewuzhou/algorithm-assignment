@@ -5,6 +5,9 @@ import java.util.Arrays;
 public class Board {
     private int dimension;
     private int[][] tiles;
+    private Board perfectBoard;
+    private Integer hamming;
+    private Integer manhattan;
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
@@ -36,17 +39,55 @@ public class Board {
 
     // number of tiles out of place
     public int hamming() {
-        return 0;
+        if (this.hamming == null) {
+            calculateHamming();
+        }
+        return this.hamming;
+    }
+
+    private void calculateHamming() {
+        this.hamming = 0;
+        Board perfectBoard = this.buildPerfectBoard();
+        for (int i = 0; i < this.dimension; i++) {
+            for (int j = 0; j < this.dimension; j++) {
+                if (tiles[i][j] != perfectBoard.tiles[i][j] && tiles[i][j] != 0) {
+                    this.hamming++;
+                }
+            }
+        }
     }
 
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
-        return 0;
+        if (this.manhattan == null) {
+            calculateManhattan();
+        }
+        return this.manhattan;
+    }
+
+    private void calculateManhattan() {
+        this.manhattan = 0;
+        Board perfectBoard = this.buildPerfectBoard();
+        for (int i = 0; i < this.dimension; i++) {
+            for (int j = 0; j < this.dimension; j++) {
+                if (tiles[i][j] != perfectBoard.tiles[i][j] && tiles[i][j] != 0) {
+                    this.manhattan = this.manhattan + distance(i, j);
+                }
+            }
+        }
+    }
+
+    private int distance(int i, int j) {
+        int targetRow = ((tiles[i][j] - 1) / this.dimension) - i;
+        int targetColumn = (tiles[i][j] - 1) % this.dimension - j;
+        int vertical = Math.abs(targetRow);
+        int horizontal = Math.abs(targetColumn);
+        return vertical + horizontal;
     }
 
     // is this board the goal board?
     public boolean isGoal() {
-        return this.equals(buildPerfectBoard(this.dimension));
+        return this.equals(buildPerfectBoard());
     }
 
     // does this board equal y?
@@ -112,19 +153,22 @@ public class Board {
         }
     }
 
-    private Board buildPerfectBoard(int dimension) {
-        int[][] validArrays = new int[dimension][dimension];
-
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                if (i == dimension - 1 && j == dimension - 1) {
-                    validArrays[i][j] = 0;
-                } else {
-                    validArrays[i][j] = i * dimension + j + 1;
+    private Board buildPerfectBoard() {
+        int dimension = this.dimension;
+        if (perfectBoard == null) {
+            int[][] validArrays = new int[dimension][dimension];
+            for (int i = 0; i < dimension; i++) {
+                for (int j = 0; j < dimension; j++) {
+                    if (i == dimension - 1 && j == dimension - 1) {
+                        validArrays[i][j] = 0;
+                    } else {
+                        validArrays[i][j] = i * dimension + j + 1;
+                    }
                 }
             }
+            perfectBoard = new Board(validArrays);
         }
-        return new Board(validArrays);
+        return perfectBoard;
     }
 
     // unit testing (not graded)

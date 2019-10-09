@@ -113,9 +113,54 @@ public class BoardTest {
         int temp = tiles[0][0];
         tiles[0][0] = tiles[9][9];
         tiles[9][9] = temp;
-        Board perfectBoard = new Board(tiles);
+        Board board = new Board(tiles);
 
-        assertThat(perfectBoard.isGoal(), is(false));
+        assertThat(board.isGoal(), is(false));
+    }
+
+    @Test
+    public void should_calculate_hamming() {
+        assertThat(createValidBoard(10).hamming(), is(0));
+
+        int[][] tiles = calculateTiles(10);
+        int temp = tiles[0][0];
+        tiles[0][0] = tiles[9][9];
+        tiles[9][9] = temp;
+        Board board = new Board(tiles);
+
+        assertThat(board.hamming(), is(1));
+    }
+
+    @Test
+    public void should_calculate_manhattan() {
+        assertThat(createValidBoard(10).manhattan(), is(0));
+
+        int[][] tiles = calculateTiles(10);
+        int temp = tiles[0][0];
+        tiles[0][0] = tiles[9][9];
+        tiles[9][9] = temp;
+        Board board = new Board(tiles);
+
+        assertThat(board.manhattan(), is(18));
+    }
+
+    @Test
+    public void should_calculate_manhattan_hamming_for_more_cases() {
+        int[][] tilesV1 = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};
+        Board board = new Board(tilesV1);
+        assertThat(board.manhattan(), is(3));
+        assertThat(board.hamming(), is(3));
+
+        int[][] tilesV2 = {{4, 1, 3}, {0, 2, 5}, {7, 8, 6}};
+        board = new Board(tilesV2);
+        assertThat(board.manhattan(), is(5));
+        assertThat(board.hamming(), is(5));
+
+        int[][] tilesV3 = {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};
+        board = new Board(tilesV3);
+        assertThat(board.manhattan(), is(10));
+        assertThat(board.hamming(), is(5));
+
     }
 
     private Board createValidBoard(int dimension) {
