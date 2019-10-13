@@ -2,80 +2,105 @@ package zhewuzhou.me.week4;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Comparator;
 
 public class Solver {
-    private List<Board> moves = new ArrayList<>();
-    private HashMap<String, Board> traveledBoard = new HashMap<>();
-    private boolean isSolvable = false;
+    private boolean solvable;
+    private int move;
+    private Node current;
 
-    private class Move implements Comparable<Move> {
+    private class Node implements Comparable<Node> {
+        private int priority;
+        private Node parent;
         private Board board;
-        private int numMoves = 0;
+        private int currentMove;
 
-        public Move(Board board) {
+        public Node(int move, Node parent, Board board) {
+            this.currentMove = move;
+            this.priority = currentMove + board.manhattan();
+            this.parent = parent;
             this.board = board;
         }
 
-        public Move(Board board, int batch) {
-            this.board = board;
-            this.numMoves = batch;
-        }
-
-        public int compareTo(Move move) {
-            return (this.board.manhattan() - move.board.manhattan()) + (this.numMoves - move.numMoves);
+        public int compareTo(Node that) {
+            return Integer.compare(this.priority, that.priority);
         }
     }
 
-    // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        traveledBoard.put(initial.toString(), initial);
-        solveWithMinPQ(initial);
+        if (initial == null) {
+            throw new java.lang.IllegalArgumentException();
+        }
+        Node currentTwin;
+        MinPQ<Node> queue = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
+        MinPQ<Node> queueTwin = new MinPQ<>(Comparator.comparingInt(o -> o.priority));
+        move = 0;
+        int moveT = 0;
+        this.current = null;
+        current = new Node(0, null, initial);
+        currentTwin = new Node(0, null, initial.twin());
+        while (!(current.board.isGoal() || currentTwin.board.isGoal())) {
+            for (Board n : current.board.neighbors()) {
+                if (isNewNode(n, current)) {
+                    queue.insert(new Node(move + 1, current, n));
+                }
+            }
+            for (Board thisNeighT : currentTwin.board.neighbors()) {
+                if (isNewNode(thisNeighT, currentTwin)) {
+                    queueTwin.insert(new Node(moveT + 1, currentTwin, thisNeighT));
+                }
+            }
+            current = queue.delMin();
+            currentTwin = queueTwin.delMin();
+            move = current.currentMove;
+            moveT = currentTwin.currentMove;
+        }
+        if (current.board.isGoal()) {
+            solvable = true;
+        } else {
+            solvable = false;
+            move = -1;
+        }
     }
 
 
-    // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return this.isSolvable;
+        return solvable;
     }
 
-    // min number of moves to solve initial board
     public int moves() {
-        if (this.isSolvable) {
-            return this.moves.size() - 1;
-        } else {
-            throw new IllegalArgumentException();
-        }
+        if (!solvable) return -1;
+        return move;
     }
 
-    // sequence of boards in a shortest solution
     public Iterable<Board> solution() {
-        if (this.isSolvable) {
-            return this.moves;
+        Stack<Board> theSolution = new Stack<>();
+        Node temp;
+        if (solvable) {
+            temp = current;
         } else {
-            throw new IllegalArgumentException();
+            return null;
         }
-    }
+        while (temp != null) {
+            theSolution.push(temp.board);
+            temp = temp.parent;
+        }
+        return theSolution;
+    } // sequence of boards in a shortest solution; null if unsolvable
 
-    // test client (see below)
     public static void main(String[] args) {
-        // create initial board from file
+// create initial board from file
         In in = new In(args[0]);
         int n = in.readInt();
-        int[][] tiles = new int[n][n];
+        int[][] blocks = new int[n][n];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
-                tiles[i][j] = in.readInt();
-        Board initial = new Board(tiles);
-
-        // solve the puzzle
+                blocks[i][j] = in.readInt();
+        Board initial = new Board(blocks);
         Solver solver = new Solver(initial);
-
-        // print solution to standard output
         if (!solver.isSolvable())
             StdOut.println("No solution possible");
         else {
@@ -85,37 +110,7 @@ public class Solver {
         }
     }
 
-    private class BoardNode {
-        private Board board;
-        private Integer priority;
-    }
-
-    private void solveWithMinPQ(Board initial) {
-        Move initialMove = new Move(initial, 0);
-        MinPQ<Move> normalTry = new MinPQ<>();
-        normalTry.insert(initialMove);
-        for (int epoch = 1; ; epoch++) {
-            if (normalTry.isEmpty()) {
-                break;
-            }
-            Move move = normalTry.delMin();
-            moves.add(move.board);
-            if (move.board.isGoal()) {
-                this.isSolvable = true;
-                break;
-            }
-            addNeighbors(move, epoch, normalTry);
-        }
-    }
-
-    private void addNeighbors(Move previous, int epoch, MinPQ<Move> normalTry) {
-        Iterable<Board> neighbors = previous.board.neighbors();
-        for (Board b : neighbors) {
-            if (!traveledBoard.containsKey(b.toString())) {
-                traveledBoard.put(b.toString(), b);
-                Move m = new Move(b, epoch);
-                normalTry.insert(m);
-            }
-        }
+    private boolean isNewNode(Board n, Node current) {
+        return (current.parent == null) || (!n.equals(current.parent.board));
     }
 }

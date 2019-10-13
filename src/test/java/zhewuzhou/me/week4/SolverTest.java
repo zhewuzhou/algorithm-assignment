@@ -29,4 +29,13 @@ public class SolverTest {
         assertThat(twinSolver.isSolvable(), is(true));
         assertThat(twinSolver.moves(), is(4));
     }
+
+    @Test
+    public void should_handle_four_four_tiles() {
+        int[][] tiles = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 15, 14, 0}};
+        Board initial = new Board(tiles);
+
+        Solver solver = new Solver(initial);
+        assertThat(solver.isSolvable(), is(false));
+    }
 }
