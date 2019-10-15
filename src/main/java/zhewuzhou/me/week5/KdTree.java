@@ -3,6 +3,8 @@ package zhewuzhou.me.week5;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
+import java.util.ArrayList;
+
 public class KdTree {
     private KdNode root;
     private int size = 0;
@@ -116,7 +118,25 @@ public class KdTree {
     }
 
     public Iterable<Point2D> range(RectHV rect) {
-        return null;
+        ArrayList<Point2D> result = new ArrayList<>();
+        addPoints(root, rect, result);
+        return result;
+    }
+
+    public void addPoints(KdNode node, RectHV rect, ArrayList<Point2D> result) {
+        if (null == node) {
+            return;
+        } else {
+            if (rect.distanceTo(node.point) == 0.0) {
+                result.add(node.point);
+            }
+            if (node.leftBottom != null && rect.intersects(node.leftBottom.nodeRect)) {
+                addPoints(node.leftBottom, rect, result);
+            }
+            if (node.rightTop != null && rect.intersects(node.rightTop.nodeRect)) {
+                addPoints(node.rightTop, rect, result);
+            }
+        }
     }
 
     public Point2D nearest(Point2D p) {
