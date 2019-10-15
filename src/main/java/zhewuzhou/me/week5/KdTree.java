@@ -59,18 +59,55 @@ public class KdTree {
     }
 
     public boolean isEmpty() {
-        return size == 0;
+        return this.size == 0;
     }
 
     public int size() {
-        return size;
+        return this.size;
     }
 
     public void insert(Point2D p) {
-
+        checkInput(p);
+        KdNode current, prev;
+        if (null == this.root) {
+            this.root = new KdNode(p, new RectHV(0, 0, 1, 1), Orientation.VERTICAL);
+            this.size++;
+        } else {
+            current = this.root;
+            prev = this.root;
+            while (null != current) {
+                if (current.point.equals(p)) {
+                    return;
+                }
+                prev = current;
+                if (current.isRightOrTopOf(p)) {
+                    current = current.leftBottom;
+                } else {
+                    current = current.rightTop;
+                }
+            }
+            if (prev.isRightOrTopOf(p)) {
+                prev.leftBottom = new KdNode(p, prev.rectLeftOrBottom(), prev.next());
+                this.size++;
+            } else {
+                prev.rightTop = new KdNode(p, prev.rectRightOrTop(), prev.next());
+                this.size++;
+            }
+        }
     }
 
     public boolean contains(Point2D p) {
+        KdNode current = this.root;
+        while (null != current) {
+            if (current.point.equals(p)) {
+                return true;
+            }
+            if (current.isRightOrTopOf(p)) {
+                current = current.leftBottom;
+            } else {
+                current = current.rightTop;
+            }
+        }
         return false;
     }
 
@@ -84,5 +121,12 @@ public class KdTree {
 
     public Point2D nearest(Point2D p) {
         return null;
+    }
+
+
+    private void checkInput(Point2D p) {
+        if (p == null) {
+            throw new IllegalArgumentException("Can't insert null point");
+        }
     }
 }
