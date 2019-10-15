@@ -1,7 +1,9 @@
 package zhewuzhou.me.week5;
 
 import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
 
 import java.util.ArrayList;
 
@@ -114,7 +116,7 @@ public class KdTree {
     }
 
     public void draw() {
-
+        draw(root);
     }
 
     public Iterable<Point2D> range(RectHV rect) {
@@ -123,7 +125,39 @@ public class KdTree {
         return result;
     }
 
-    public void addPoints(KdNode node, RectHV rect, ArrayList<Point2D> result) {
+
+    public Point2D nearest(Point2D p) {
+        checkInput(p);
+        if (null == root) return null;
+        Point2D result = null;
+        double min = Double.MAX_VALUE;
+        Queue<KdNode> queue = new Queue<>();
+        queue.enqueue(root);
+        // 使用队列，而不是递归
+        while (!queue.isEmpty()) {
+            KdNode current = queue.dequeue();
+            double dis = p.distanceSquaredTo(current.point);
+            if (dis < min) {
+                result = current.point;
+                min = dis;
+            }
+            if (null != current.leftBottom && current.leftBottom.nodeRect.distanceSquaredTo(p) < min) {
+                queue.enqueue(current.leftBottom);
+            }
+            if (null != current.rightTop && current.rightTop.nodeRect.distanceSquaredTo(p) < min) {
+                queue.enqueue(current.rightTop);
+            }
+        }
+        return result;
+    }
+
+    private void checkInput(Point2D p) {
+        if (p == null) {
+            throw new IllegalArgumentException("Can't insert null point");
+        }
+    }
+
+    private void addPoints(KdNode node, RectHV rect, ArrayList<Point2D> result) {
         if (null == node) {
             return;
         } else {
@@ -139,14 +173,20 @@ public class KdTree {
         }
     }
 
-    public Point2D nearest(Point2D p) {
-        return null;
-    }
-
-
-    private void checkInput(Point2D p) {
-        if (p == null) {
-            throw new IllegalArgumentException("Can't insert null point");
+    private void draw(KdNode n) {
+        if (null == n) return;
+        draw(n.leftBottom);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        n.point.draw();
+        StdDraw.setPenRadius();
+        if (n.orientation.equals(Orientation.VERTICAL)) {
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.line(n.point.x(), n.nodeRect.ymin(), n.point.x(), n.nodeRect.ymax());
+        } else {
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.line(n.nodeRect.xmin(), n.point.y(), n.nodeRect.xmax(), n.point.y());
         }
+        draw(n.rightTop);
     }
 }

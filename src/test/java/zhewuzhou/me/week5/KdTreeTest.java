@@ -35,6 +35,16 @@ public class KdTreeTest {
         assertThat(countPoints(cornerRange), is(1));
     }
 
+    @Test
+    public void should_give_nearest_point() {
+        KdTree tree = createTree();
+
+        Point2D target = tree.nearest(new Point2D(0.2, 0.2));
+
+        assertThat(target.x(), is(0.2));
+        assertThat(target.y(), is(0.3));
+    }
+
     private int countPoints(Iterable<Point2D> fullRange) {
         int count = 0;
         for (Point2D p : fullRange) {
