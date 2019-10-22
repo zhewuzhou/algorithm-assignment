@@ -29,6 +29,16 @@ public class SAPTest {
     }
 
     @Test
+    public void should_calculate_v_v() {
+        SAP sap = new SAP(graph);
+
+        assertThat(sap.length(13, 13), is(0));
+        assertThat(sap.ancestor(13, 13), is(13));
+        assertThat(sap.length(asList(13, 23, 24), asList(6, 16, 17, 13)), is(0));
+        assertThat(sap.ancestor(asList(13, 23, 24), asList(6, 16, 17, 13)), is(13));
+    }
+
+    @Test
     public void should_calculate_shortest_distance_given_v_w_collections() {
         SAP sap = new SAP(graph);
 

@@ -71,11 +71,11 @@ public class SAP {
                 ancestors.add(i);
             }
         }
-        int minSAP = Integer.MAX_VALUE;
+        int minSAP = -1;
         int commonAncestor = -1;
         for (int a : ancestors) {
             int sumDistance = vPath.distTo(a) + wPath.distTo(a);
-            if (minSAP > sumDistance) {
+            if (minSAP < 0 || minSAP > sumDistance) {
                 minSAP = sumDistance;
                 commonAncestor = a;
             }
