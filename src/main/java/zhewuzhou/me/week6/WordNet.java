@@ -4,18 +4,25 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class WordNet {
     private static final String DELIMITER_SPACE = " ";
     private static final String DELIMITER_COMMA = ",";
-    private Map<String, List<Integer>> nounIdMap = new TreeMap<>();
-    private Map<Integer, List<String>> idNounMap = new TreeMap<>();
+    private final Map<String, List<Integer>> nounIdMap = new TreeMap<>();
+    private final Map<Integer, String> idNounsMap = new TreeMap<>();
     private SAP sap;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
-        parseInputFile(synsets, hypernyms);
+        checkInputFile(synsets, hypernyms);
+        In syn = new In(synsets);
+        In hyper = new In(hypernyms);
+        buildSynonyms(syn);
+        buildGraph(hyper);
     }
 
 
@@ -41,15 +48,8 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         this.checkStringArgument(nounA);
         this.checkStringArgument(nounB);
-        int ancestor = sap.ancestor(nounIdMap.get(nounA), nounIdMap.get(nounB));
-        return String.join(DELIMITER_SPACE, idNounMap.get(ancestor));
+        return idNounsMap.get(sap.ancestor(nounIdMap.get(nounA), nounIdMap.get(nounB)));
     }
-
-    // do unit testing of this class
-    public static void main(String[] args) {
-
-    }
-
 
     private void checkInputFile(String synsets, String hypernyms) {
         if (synsets == null || hypernyms == null) {
@@ -70,15 +70,7 @@ public class WordNet {
         }
     }
 
-    private void parseInputFile(String synsets, String hypernyms) {
-        checkInputFile(synsets, hypernyms);
-        In syn = new In(synsets);
-        In hyper = new In(hypernyms);
-        buildSynsets(syn);
-        buildGraph(hyper);
-    }
-
-    private void buildSynsets(In syn) {
+    private void buildSynonyms(In syn) {
         while (syn.exists() && syn.hasNextLine()) {
             String line = syn.readLine();
             String[] columns = splitLine(line, DELIMITER_COMMA);
@@ -94,13 +86,13 @@ public class WordNet {
                         this.nounIdMap.put(noun, ids);
                     }
                 }
-                this.idNounMap.put(synId, Arrays.asList(nouns));
+                this.idNounsMap.put(synId, columns[1]);
             }
         }
     }
 
     private void buildGraph(In hyper) {
-        Digraph net = new Digraph(this.idNounMap.size());
+        Digraph net = new Digraph(this.idNounsMap.size());
         while (hyper.exists() && hyper.hasNextLine()) {
             String line = hyper.readLine();
             String[] columns = splitLine(line, DELIMITER_COMMA);
@@ -115,7 +107,20 @@ public class WordNet {
             }
         }
         checkCycle(net);
+        checkRoot(net);
         this.sap = new SAP(net);
+    }
+
+    private void checkRoot(Digraph net) {
+        int root = 0;
+        for (int v : idNounsMap.keySet()) {
+            if (net.outdegree(v) == 0) {
+                root++;
+            }
+        }
+        if (root != 1) {
+            throw new IllegalArgumentException("Can not have more than 1 root");
+        }
     }
 
     private String[] splitLine(String line, String delimiter) {

@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class SAP {
-    private Digraph graph;
-    private HashMap<String, SAPInfo> cache = new HashMap<>();
+    private final Digraph graph;
+    private final HashMap<String, SAPInfo> cache = new HashMap<>();
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
@@ -137,12 +137,12 @@ public class SAP {
     }
 
     private class SAPInfo {
+        private final int ancestor;
+        private final int distance;
+
         public SAPInfo(int ancestor, int distance) {
             this.ancestor = ancestor;
             this.distance = distance;
         }
-
-        private int ancestor;
-        private int distance;
     }
 }

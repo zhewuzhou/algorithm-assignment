@@ -1,7 +1,7 @@
 package zhewuzhou.me.week6;
 
 public class Outcast {
-    private WordNet wordNet;
+    private final WordNet wordNet;
 
     // constructor takes a WordNet object
     public Outcast(WordNet wordnet) {
@@ -10,10 +10,10 @@ public class Outcast {
 
     // given an array of WordNet nouns, return an outcast
     public String outcast(String[] nouns) {
-        Long maxDistance = 0L;
+        int maxDistance = 0;
         String outcast = null;
         for (String v : nouns) {
-            Long distance = 0L;
+            int distance = 0;
             for (String w : nouns) {
                 distance = distance + wordNet.distance(v, w);
             }
@@ -23,10 +23,5 @@ public class Outcast {
             }
         }
         return outcast;
-    }
-
-    // see test client below
-    public static void main(String[] args) {
-
     }
 }
