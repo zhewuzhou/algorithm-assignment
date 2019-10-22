@@ -5,6 +5,10 @@ import edu.princeton.cs.algs4.Digraph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class SAP {
     private Digraph graph;
@@ -34,12 +38,13 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return 0;
+        return handleCollections(v, w).sap;
     }
+
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return 0;
+        return handleCollections(v, w).commonAncestor;
     }
 
     // do unit testing of this class
@@ -78,10 +83,50 @@ public class SAP {
         return w + "_" + v;
     }
 
+    private void checkInput(Iterable<Integer> v) {
+        if (null == v) {
+            throw new IllegalArgumentException("Collection can not be null");
+        }
+        for (Integer vertex : v) {
+            if (null == vertex) {
+                throw new IllegalArgumentException("Vertex can not be null");
+            }
+            checkRepeatedItems(v);
+            checkInput(vertex);
+        }
+    }
+
+    private void checkRepeatedItems(Iterable<Integer> v) {
+        Set<Integer> vertexSet = StreamSupport.stream(v.spliterator(), false)
+            .collect(Collectors.toSet());
+        List<Integer> vertexList = StreamSupport.stream(v.spliterator(), false)
+            .collect(Collectors.toList());
+        if (vertexSet.size() != vertexList.size()) {
+            throw new IllegalArgumentException("Repeated Vertex Found");
+        }
+    }
+
     private void checkInput(int v) {
         if (v < 0 || v >= graph.V()) {
             throw new IllegalArgumentException("Vertex can not be negative or larger than total number of vertexes");
         }
+    }
+
+    private SAPInfo handleCollections(Iterable<Integer> v, Iterable<Integer> w) {
+        checkInput(v);
+        checkInput(w);
+        int minLength = Integer.MAX_VALUE;
+        int commonAncestor = -1;
+        for (int vVertex : v) {
+            for (int wVertex : w) {
+                int lengthVW = this.length(vVertex, wVertex);
+                if (minLength > lengthVW) {
+                    minLength = lengthVW;
+                    commonAncestor = this.ancestor(vVertex, wVertex);
+                }
+            }
+        }
+        return new SAPInfo(commonAncestor, minLength);
     }
 
     private class SAPInfo {
