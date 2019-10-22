@@ -1,10 +1,6 @@
 package zhewuzhou.me.week6;
 
-import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
-import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +10,7 @@ import java.util.stream.StreamSupport;
 
 public class SAP {
     private final Digraph graph;
-    private final HashMap<String, SAPInfo> cache = new HashMap<>();
+    private final HashMap<String, SAPInfo> twoPointsCache = new HashMap<>();
     private final HashMap<Integer, BreadthFirstDirectedPaths> pathCatch = new HashMap<>();
 
     // constructor takes a digraph (not necessarily a DAG)
@@ -24,19 +20,19 @@ public class SAP {
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        if (!cache.containsKey(generateKey(v, w))) {
+        if (!twoPointsCache.containsKey(generateKey(v, w))) {
             calculateSAP(v, w);
         }
-        return cache.get(generateKey(v, w)).distance;
+        return twoPointsCache.get(generateKey(v, w)).distance;
     }
 
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        if (!cache.containsKey(generateKey(v, w))) {
+        if (!twoPointsCache.containsKey(generateKey(v, w))) {
             calculateSAP(v, w);
         }
-        return cache.get(generateKey(v, w)).ancestor;
+        return twoPointsCache.get(generateKey(v, w)).ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
@@ -81,7 +77,7 @@ public class SAP {
             }
         }
         SAPInfo sapInfo = new SAPInfo(commonAncestor, minSAP);
-        cache.put(generateKey(v, w), sapInfo);
+        twoPointsCache.put(generateKey(v, w), sapInfo);
     }
 
     private BreadthFirstDirectedPaths getPath(int v) {
