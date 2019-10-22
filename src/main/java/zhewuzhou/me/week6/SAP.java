@@ -53,8 +53,8 @@ public class SAP {
     }
 
     private void calculateSAP(int v, int w) {
-        checkInput(v);
-        checkInput(w);
+        checkVertexRange(v);
+        checkVertexRange(w);
         BreadthFirstDirectedPaths vPath = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths wPath = new BreadthFirstDirectedPaths(graph, w);
         ArrayList<Integer> ancestors = new ArrayList<>();
@@ -83,7 +83,7 @@ public class SAP {
         return w + "_" + v;
     }
 
-    private void checkInput(Iterable<Integer> v) {
+    private void checkVertexCollection(Iterable<Integer> v) {
         if (null == v) {
             throw new IllegalArgumentException("Collection can not be null");
         }
@@ -92,7 +92,7 @@ public class SAP {
                 throw new IllegalArgumentException("Vertex can not be null");
             }
             checkRepeatedItems(v);
-            checkInput(vertex);
+            checkVertexRange(vertex);
         }
     }
 
@@ -106,15 +106,15 @@ public class SAP {
         }
     }
 
-    private void checkInput(int v) {
+    private void checkVertexRange(int v) {
         if (v < 0 || v >= graph.V()) {
             throw new IllegalArgumentException("Vertex can not be negative or larger than total number of vertexes");
         }
     }
 
     private SAPInfo handleCollections(Iterable<Integer> v, Iterable<Integer> w) {
-        checkInput(v);
-        checkInput(w);
+        checkVertexCollection(v);
+        checkVertexCollection(w);
         int minLength = Integer.MAX_VALUE;
         int commonAncestor = -1;
         for (int vVertex : v) {
