@@ -1,7 +1,6 @@
 package zhewuzhou.me.week6;
 
-import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
-import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +48,16 @@ public class SAP {
 
     // do unit testing of this class
     public static void main(String[] args) {
-
+        In in = new In(args[0]);
+        Digraph G = new Digraph(in);
+        SAP sap = new SAP(G);
+        while (!StdIn.isEmpty()) {
+            int v = StdIn.readInt();
+            int w = StdIn.readInt();
+            int length = sap.length(v, w);
+            int ancestor = sap.ancestor(v, w);
+            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+        }
     }
 
     private void calculateSAP(int v, int w) {
