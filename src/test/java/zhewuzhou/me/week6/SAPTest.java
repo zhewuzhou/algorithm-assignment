@@ -5,6 +5,8 @@ import edu.princeton.cs.algs4.In;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -44,6 +46,14 @@ public class SAPTest {
 
         assertThat(sap.length(asList(13, 23, 24), asList(6, 16, 17)), is(4));
         assertThat(sap.ancestor(asList(13, 23, 24), asList(6, 16, 17)), is(3));
+    }
+
+    @Test
+    public void should_get_negative_one_given_empty_collections() {
+        SAP sap = new SAP(graph);
+
+        assertThat(sap.length(asList(13, 23, 24), new ArrayList<>()), is(-1));
+        assertThat(sap.length(asList(13, 23, 24), new ArrayList<>()), is(-1));
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -118,12 +118,16 @@ public class SAP {
     private SAPInfo handleCollections(Iterable<Integer> v, Iterable<Integer> w) {
         checkVertexCollection(v);
         checkVertexCollection(w);
-        int minLength = Integer.MAX_VALUE;
+        int minLength = -1;
         int commonAncestor = -1;
         for (int vVertex : v) {
             for (int wVertex : w) {
-                int lengthVW = this.length(vVertex, wVertex);
-                if (minLength > lengthVW) {
+                int lengthVW = 0;
+                if (vVertex == wVertex) {
+                    return new SAPInfo(vVertex, 0);
+                }
+                lengthVW = this.length(vVertex, wVertex);
+                if (minLength < 0 || lengthVW < minLength) {
                     minLength = lengthVW;
                     commonAncestor = this.ancestor(vVertex, wVertex);
                 }
