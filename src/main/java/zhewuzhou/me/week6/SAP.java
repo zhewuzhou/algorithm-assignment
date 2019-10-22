@@ -1,6 +1,10 @@
 package zhewuzhou.me.week6;
 
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +15,7 @@ import java.util.stream.StreamSupport;
 public class SAP {
     private final Digraph graph;
     private final HashMap<String, SAPInfo> cache = new HashMap<>();
+    private final HashMap<Integer, BreadthFirstDirectedPaths> pathCatch = new HashMap<>();
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
@@ -62,8 +67,8 @@ public class SAP {
     private void calculateSAP(int v, int w) {
         checkVertexRange(v);
         checkVertexRange(w);
-        BreadthFirstDirectedPaths vPath = new BreadthFirstDirectedPaths(graph, v);
-        BreadthFirstDirectedPaths wPath = new BreadthFirstDirectedPaths(graph, w);
+        BreadthFirstDirectedPaths vPath = getPath(v);
+        BreadthFirstDirectedPaths wPath = getPath(w);
         int minSAP = -1;
         int commonAncestor = -1;
         for (int s = 0; s < graph.V(); s++) {
@@ -77,6 +82,13 @@ public class SAP {
         }
         SAPInfo sapInfo = new SAPInfo(commonAncestor, minSAP);
         cache.put(generateKey(v, w), sapInfo);
+    }
+
+    private BreadthFirstDirectedPaths getPath(int v) {
+        if (!pathCatch.containsKey(v)) {
+            pathCatch.put(v, new BreadthFirstDirectedPaths(graph, v));
+        }
+        return pathCatch.get(v);
     }
 
     private String generateKey(int v, int w) {
