@@ -42,4 +42,18 @@ public class WordNetTest {
         assertThat(wordNet.distance(nounA, nounB), is(15));
         assertThat(wordNet.sap(nounA, nounB), is("entity"));
     }
+
+    @Test
+    public void should_calculate_coffee_distance() {
+        assertThat(wordNet.isNoun("coffee"), is(true));
+        assertThat(wordNet.distance("coffee", "coffee"), is(0));
+        assertThat(wordNet.distance("coffee", "water"), is(10));
+        assertThat(wordNet.sap("coffee", "water"), is("whole unit"));
+        assertThat(wordNet.distance("coffee", "soda"), is(16));
+        assertThat(wordNet.distance("coffee", "bed"), is(13));
+        assertThat(wordNet.distance("coffee", "orange_juice"), is(15));
+        assertThat(wordNet.distance("coffee", "milk"), is(14));
+        assertThat(wordNet.distance("coffee", "apple_juice"), is(15));
+        assertThat(wordNet.distance("coffee", "tea"), is(17));
+    }
 }

@@ -2,7 +2,6 @@ package zhewuzhou.me.week6;
 
 import edu.princeton.cs.algs4.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +22,7 @@ public class SAP {
         if (!cache.containsKey(generateKey(v, w))) {
             calculateSAP(v, w);
         }
-        return cache.get(generateKey(v, w)).sap;
+        return cache.get(generateKey(v, w)).distance;
     }
 
 
@@ -32,18 +31,18 @@ public class SAP {
         if (!cache.containsKey(generateKey(v, w))) {
             calculateSAP(v, w);
         }
-        return cache.get(generateKey(v, w)).commonAncestor;
+        return cache.get(generateKey(v, w)).ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return handleCollections(v, w).sap;
+        return handleCollections(v, w).distance;
     }
 
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return handleCollections(v, w).commonAncestor;
+        return handleCollections(v, w).ancestor;
     }
 
     // do unit testing of this class
@@ -65,19 +64,15 @@ public class SAP {
         checkVertexRange(w);
         BreadthFirstDirectedPaths vPath = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths wPath = new BreadthFirstDirectedPaths(graph, w);
-        ArrayList<Integer> ancestors = new ArrayList<>();
-        for (int i = 0; i < graph.V(); i++) {
-            if (vPath.hasPathTo(i) && wPath.hasPathTo(i)) {
-                ancestors.add(i);
-            }
-        }
         int minSAP = -1;
         int commonAncestor = -1;
-        for (int a : ancestors) {
-            int sumDistance = vPath.distTo(a) + wPath.distTo(a);
-            if (minSAP < 0 || minSAP > sumDistance) {
-                minSAP = sumDistance;
-                commonAncestor = a;
+        for (int s = 0; s < graph.V(); s++) {
+            if (vPath.hasPathTo(s) && wPath.hasPathTo(s)) {
+                int distance = vPath.distTo(s) + wPath.distTo(s);
+                if (minSAP < 0 || distance < minSAP) {
+                    minSAP = distance;
+                    commonAncestor = s;
+                }
             }
         }
         SAPInfo sapInfo = new SAPInfo(commonAncestor, minSAP);
@@ -138,12 +133,12 @@ public class SAP {
     }
 
     private class SAPInfo {
-        public SAPInfo(int commonAncestor, int sap) {
-            this.commonAncestor = commonAncestor;
-            this.sap = sap;
+        public SAPInfo(int ancestor, int distance) {
+            this.ancestor = ancestor;
+            this.distance = distance;
         }
 
-        private int commonAncestor;
-        private int sap;
+        private int ancestor;
+        private int distance;
     }
 }
