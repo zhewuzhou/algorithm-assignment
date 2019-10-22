@@ -11,7 +11,8 @@ public class WordNetTest {
     @Test
     public void should_contain_a_noun() {
         assertThat(wordNet.isNoun("xxxxxxxxxx"), is(false));
-        assertThat(wordNet.isNoun("zoology zoological_science"), is(true));
+        assertThat(wordNet.isNoun("zoological_science"), is(true));
+        assertThat(wordNet.isNoun("zoology"), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -47,13 +48,12 @@ public class WordNetTest {
     public void should_calculate_coffee_distance() {
         assertThat(wordNet.isNoun("coffee"), is(true));
         assertThat(wordNet.distance("coffee", "coffee"), is(0));
-        assertThat(wordNet.distance("coffee", "water"), is(10));
-        assertThat(wordNet.sap("coffee", "water"), is("whole unit"));
-        assertThat(wordNet.distance("coffee", "soda"), is(16));
-        assertThat(wordNet.distance("coffee", "bed"), is(13));
-        assertThat(wordNet.distance("coffee", "orange_juice"), is(15));
-        assertThat(wordNet.distance("coffee", "milk"), is(14));
-        assertThat(wordNet.distance("coffee", "apple_juice"), is(15));
-        assertThat(wordNet.distance("coffee", "tea"), is(17));
+        assertThat(wordNet.distance("coffee", "water"), is(3));
+        assertThat(wordNet.distance("coffee", "soda"), is(3));
+        assertThat(wordNet.distance("coffee", "bed"), is(9));
+        assertThat(wordNet.distance("coffee", "orange_juice"), is(3));
+        assertThat(wordNet.distance("coffee", "milk"), is(2));
+        assertThat(wordNet.distance("coffee", "apple_juice"), is(3));
+        assertThat(wordNet.distance("coffee", "tea"), is(2));
     }
 }

@@ -4,15 +4,12 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class WordNet {
     private static final String DELIMITER_SPACE = " ";
     private static final String DELIMITER_COMMA = ",";
-    private Map<String, Integer> nounIdMap = new TreeMap<>();
+    private Map<String, List<Integer>> nounIdMap = new TreeMap<>();
     private Map<Integer, List<String>> idNounMap = new TreeMap<>();
     private SAP sap;
 
@@ -77,6 +74,11 @@ public class WordNet {
         checkInputFile(synsets, hypernyms);
         In syn = new In(synsets);
         In hyper = new In(hypernyms);
+        buildSynsets(syn);
+        buildGraph(hyper);
+    }
+
+    private void buildSynsets(In syn) {
         while (syn.exists() && syn.hasNextLine()) {
             String line = syn.readLine();
             String[] columns = splitLine(line, DELIMITER_COMMA);
@@ -84,11 +86,20 @@ public class WordNet {
                 int synId = Integer.parseInt(columns[0]);
                 String[] nouns = splitLine(columns[1], DELIMITER_SPACE);
                 for (String noun : nouns) {
-                    this.nounIdMap.put(noun, synId);
+                    if (this.nounIdMap.containsKey(noun)) {
+                        this.nounIdMap.get(noun).add(synId);
+                    } else {
+                        List<Integer> ids = new ArrayList<>();
+                        ids.add(synId);
+                        this.nounIdMap.put(noun, ids);
+                    }
                 }
                 this.idNounMap.put(synId, Arrays.asList(nouns));
             }
         }
+    }
+
+    private void buildGraph(In hyper) {
         Digraph net = new Digraph(this.idNounMap.size());
         while (hyper.exists() && hyper.hasNextLine()) {
             String line = hyper.readLine();
