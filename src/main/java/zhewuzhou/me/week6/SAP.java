@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -91,11 +92,13 @@ public class SAP {
     }
 
     private String generateKey(Iterable<Integer> v, Iterable<Integer> w) {
-        List<Integer> first, second;
-        List<Integer> vList = StreamSupport.stream(v.spliterator(), false)
-            .collect(Collectors.toList());
-        List<Integer> wList = StreamSupport.stream(w.spliterator(), false)
-            .collect(Collectors.toList());
+        Set<Integer> first, second;
+        Set<Integer> vList = StreamSupport
+            .stream(v.spliterator(), false)
+            .collect(Collectors.toCollection(TreeSet::new));
+        Set<Integer> wList = StreamSupport
+            .stream(w.spliterator(), false)
+            .collect(Collectors.toCollection(TreeSet::new));
         if (vList.size() > wList.size()) {
             first = vList;
             second = wList;
@@ -103,14 +106,14 @@ public class SAP {
             first = wList;
             second = vList;
         }
-        String key = "_";
+        StringBuilder key = new StringBuilder("_");
         for (int vVertex : first) {
-            key = key + vVertex + "_";
+            key.append(vVertex).append("_");
         }
         for (int wVertex : second) {
-            key = key + wVertex + "_";
+            key.append(wVertex).append("_");
         }
-        return key;
+        return key.toString();
     }
 
     private void checkVertexCollection(Iterable<Integer> v) {
