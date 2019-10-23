@@ -33,7 +33,9 @@ public class WordNet {
 
     // is the word a WordNet noun?
     public boolean isNoun(String word) {
-        checkStringArgument(word);
+        if (null == word) {
+            throw new IllegalArgumentException("isNoun can not accept null string");
+        }
         return nounIdMap.containsKey(word);
     }
 
