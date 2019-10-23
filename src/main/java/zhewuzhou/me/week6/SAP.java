@@ -10,39 +10,56 @@ import java.util.stream.StreamSupport;
 
 public class SAP {
     private final Digraph graph;
-    private final HashMap<String, SAPInfo> twoPointsCache = new HashMap<>();
+    private final HashMap<String, SAPInfo> cache = new HashMap<>();
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
+        if (null == G) {
+            throw new IllegalArgumentException("Graph is null");
+        }
         this.graph = G;
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        if (!twoPointsCache.containsKey(generateKey(v, w))) {
-            calculateSAP(v, w);
+        checkVertexRange(v);
+        checkVertexRange(w);
+        if (!cache.containsKey(generateKey(v, w))) {
+            handleTwoPoints(v, w);
         }
-        return twoPointsCache.get(generateKey(v, w)).distance;
+        return cache.get(generateKey(v, w)).distance;
     }
 
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        if (!twoPointsCache.containsKey(generateKey(v, w))) {
-            calculateSAP(v, w);
+        checkVertexRange(v);
+        checkVertexRange(w);
+        if (!cache.containsKey(generateKey(v, w))) {
+            handleTwoPoints(v, w);
         }
-        return twoPointsCache.get(generateKey(v, w)).ancestor;
+        return cache.get(generateKey(v, w)).ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return handleCollections(v, w).distance;
+        checkVertexCollection(v);
+        checkVertexCollection(w);
+        if (!cache.containsKey(generateKey(v, w))) {
+            handleCollections(v, w);
+        }
+        return cache.get(generateKey(v, w)).distance;
     }
 
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return handleCollections(v, w).ancestor;
+        checkVertexCollection(v);
+        checkVertexCollection(w);
+        if (!cache.containsKey(generateKey(v, w))) {
+            handleCollections(v, w);
+        }
+        return cache.get(generateKey(v, w)).ancestor;
     }
 
     // do unit testing of this class
@@ -59,24 +76,11 @@ public class SAP {
         }
     }
 
-    private void calculateSAP(int v, int w) {
-        checkVertexRange(v);
-        checkVertexRange(w);
+    private void handleTwoPoints(int v, int w) {
         BreadthFirstDirectedPaths vPath = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths wPath = new BreadthFirstDirectedPaths(graph, w);
-        int minSAP = -1;
-        int commonAncestor = -1;
-        for (int s = 0; s < graph.V(); s++) {
-            if (vPath.hasPathTo(s) && wPath.hasPathTo(s)) {
-                int distance = vPath.distTo(s) + wPath.distTo(s);
-                if (minSAP < 0 || distance < minSAP) {
-                    minSAP = distance;
-                    commonAncestor = s;
-                }
-            }
-        }
-        SAPInfo sapInfo = new SAPInfo(commonAncestor, minSAP);
-        twoPointsCache.put(generateKey(v, w), sapInfo);
+        SAPInfo sapInfo = calculateSAP(vPath, wPath);
+        cache.put(generateKey(v, w), sapInfo);
     }
 
     private String generateKey(int v, int w) {
@@ -84,6 +88,29 @@ public class SAP {
             return v + "_" + w;
         }
         return w + "_" + v;
+    }
+
+    private String generateKey(Iterable<Integer> v, Iterable<Integer> w) {
+        List<Integer> first, second;
+        List<Integer> vList = StreamSupport.stream(v.spliterator(), false)
+            .collect(Collectors.toList());
+        List<Integer> wList = StreamSupport.stream(w.spliterator(), false)
+            .collect(Collectors.toList());
+        if (vList.size() > wList.size()) {
+            first = vList;
+            second = wList;
+        } else {
+            first = wList;
+            second = vList;
+        }
+        String key = "_";
+        for (int vVertex : first) {
+            key = key + vVertex + "_";
+        }
+        for (int wVertex : second) {
+            key = key + wVertex + "_";
+        }
+        return key;
     }
 
     private void checkVertexCollection(Iterable<Integer> v) {
@@ -116,20 +143,22 @@ public class SAP {
     }
 
     private SAPInfo handleCollections(Iterable<Integer> v, Iterable<Integer> w) {
-        checkVertexCollection(v);
-        checkVertexCollection(w);
+        BreadthFirstDirectedPaths vPath = new BreadthFirstDirectedPaths(graph, v);
+        BreadthFirstDirectedPaths wPath = new BreadthFirstDirectedPaths(graph, w);
+        SAPInfo sapInfo = calculateSAP(vPath, wPath);
+        cache.put(generateKey(v, w), sapInfo);
+        return sapInfo;
+    }
+
+    private SAPInfo calculateSAP(BreadthFirstDirectedPaths vPath, BreadthFirstDirectedPaths wPath) {
         int minLength = -1;
         int commonAncestor = -1;
-        for (int vVertex : v) {
-            for (int wVertex : w) {
-                int lengthVW = 0;
-                if (vVertex == wVertex) {
-                    return new SAPInfo(vVertex, 0);
-                }
-                lengthVW = this.length(vVertex, wVertex);
-                if (minLength < 0 || lengthVW < minLength) {
-                    minLength = lengthVW;
-                    commonAncestor = this.ancestor(vVertex, wVertex);
+        for (int s = 0; s < graph.V(); s++) {
+            if (vPath.hasPathTo(s) && wPath.hasPathTo(s)) {
+                int distance = vPath.distTo(s) + wPath.distTo(s);
+                if (minLength < 0 || distance < minLength) {
+                    minLength = distance;
+                    commonAncestor = s;
                 }
             }
         }
