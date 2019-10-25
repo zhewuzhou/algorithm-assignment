@@ -6,16 +6,19 @@ import java.awt.*;
 
 public class SeamCarver {
     private int[][] colors;
+    private double[][] energies;
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         if (null == picture) {
             throw new IllegalArgumentException("Picture for constructor can't be null");
         }
-        colors = new int[picture.width()][picture.height()];
-        for (int i = 0; i < width(); i++) {
-            for (int j = 0; j < height(); j++) {
-                colors[i][j] = picture.get(i, j).getRGB();
+        this.colors = new int[picture.width()][picture.height()];
+        this.energies = new double[picture.width()][picture.height()];
+        for (int c = 0; c < width(); c++) {
+            for (int r = 0; r < height(); r++) {
+                colors[c][r] = picture.get(c, r).getRGB();
+                energies[c][r] = energy(c, r);
             }
         }
     }
@@ -68,7 +71,7 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        return null;
+        return findHorizontalSeam(3).pixelTo;
     }
 
     // remove horizontal seam from current picture
@@ -79,6 +82,57 @@ public class SeamCarver {
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
 
+    }
+
+    private SP findHorizontalSeam(int column) {
+        SP sp = new SP(this.height());
+        double[][] distances = initEnergyTo();
+        sp.pixelTo[0] = column;
+        for (int row = 0; row < this.height() - 1; row++) {
+            int nextColumn = relax(column, distances, row);
+            sp.pixelTo[row + 1] = nextColumn;
+            column = nextColumn;
+        }
+        sp.pixelTo[this.height() - 1] = sp.pixelTo[this.height() - 2];
+        return sp;
+    }
+
+    private int relax(int column, double[][] distances, int row) {
+        int nextChooseColumn = -1;
+        double down = distances[column][row] + this.energies[column][row + 1];
+        double leftDown;
+        double rightDown;
+        if (distances[column][row + 1] > down) {
+            distances[column][row + 1] = down;
+            nextChooseColumn = column;
+        }
+        if (column - 1 >= 0) {
+            leftDown = distances[column][row] + this.energies[column - 1][row + 1];
+            if (distances[column - 1][row + 1] > leftDown) {
+                distances[column - 1][row + 1] = leftDown;
+            }
+            if (distances[column - 1][row + 1] < distances[column][row + 1]) {
+                nextChooseColumn = column - 1;
+            }
+        }
+        rightDown = distances[column][row] + this.energies[column + 1][row + 1];
+        if (distances[column + 1][row + 1] > rightDown) {
+            distances[column + 1][row + 1] = rightDown;
+            if (distances[column + 1][row + 1] < distances[column - 1][row + 1]) {
+                nextChooseColumn = column + 1;
+            }
+        }
+        return nextChooseColumn;
+    }
+
+    private double[][] initEnergyTo() {
+        double[][] distances = new double[this.width()][this.height()];
+        for (int c = 0; c < this.width(); c++) {
+            for (int r = 1; r < this.height(); r++) {
+                distances[c][r] = Double.MAX_VALUE;
+            }
+        }
+        return distances;
     }
 
     private void checkCoordinate(int column, int row) {
@@ -99,5 +153,14 @@ public class SeamCarver {
 
     private int blue(int rgb) {
         return (rgb >> 0) & 0xFF;
+    }
+
+    private class SP {
+        int[] pixelTo;
+        double distance;
+
+        public SP(int steps) {
+            this.pixelTo = new int[steps];
+        }
     }
 }
