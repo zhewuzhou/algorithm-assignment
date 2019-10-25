@@ -5,60 +5,59 @@ import edu.princeton.cs.algs4.Picture;
 import java.awt.*;
 
 public class SeamCarver {
-    private Picture picture;
-    private int width;
-    private int height;
-    private double[][] cache;
+    private int[][] colors;
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         if (null == picture) {
             throw new IllegalArgumentException("Picture for constructor can't be null");
         }
-        this.picture = picture;
-        this.width = picture.width();
-        this.height = picture.height();
-        this.cache = new double[height][width];
+        colors = new int[picture.width()][picture.height()];
+        for (int i = 0; i < width(); i++) {
+            for (int j = 0; j < height(); j++) {
+                colors[i][j] = picture.get(i, j).getRGB();
+            }
+        }
     }
 
     // current picture
     public Picture picture() {
+        Picture picture = new Picture(colors.length, colors[0].length);
+        for (int i = 0; i < colors.length; i++) {
+            for (int j = 0; j < colors[0].length; j++) {
+                Color color = new Color(this.colors[i][j]);
+                picture.set(i, j, color);
+            }
+        }
         return picture;
     }
 
     // width of current picture
     public int width() {
-        return this.width;
+        return this.colors.length;
     }
 
     // height of current picture
     public int height() {
-        return this.height;
+        return this.colors[0].length;
     }
 
     // energy of pixel at column x and row y
     public double energy(int column, int row) {
         checkCoordinate(column, row);
-        if (cache[row][column] == 0D) {
-            calculateEnergy(column, row);
-        }
-        return cache[row][column];
-    }
-
-    private void calculateEnergy(int column, int row) {
-        if (column == 0 || column == width - 1 || row == 0 || row == height - 1) {
-            cache[row][column] = 1000D;
+        if (column == 0 || column == this.width() - 1 || row == 0 || row == this.height() - 1) {
+            return 1000D;
         } else {
-            double deltaX = getDelta(picture.get(column - 1, row), picture.get(column + 1, row));
-            double deltaY = getDelta(picture.get(column, row - 1), picture.get(column, row + 1));
-            cache[row][column] = Math.sqrt(deltaX + deltaY);
+            double deltaX = getDelta(colors[column - 1][row], colors[column + 1][row]);
+            double deltaY = getDelta(colors[column][row - 1], colors[column][row + 1]);
+            return Math.sqrt(deltaX + deltaY);
         }
     }
 
-    private double getDelta(Color s, Color t) {
-        int redDiff = t.getRed() - s.getRed();
-        int greenDiff = t.getGreen() - s.getGreen();
-        int blueDiff = t.getBlue() - s.getBlue();
+    private double getDelta(int s, int t) {
+        int redDiff = red(t) - red(s);
+        int greenDiff = green(t) - green(s);
+        int blueDiff = blue(t) - blue(s);
         return redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff;
     }
 
@@ -83,10 +82,22 @@ public class SeamCarver {
     }
 
     private void checkCoordinate(int column, int row) {
-        boolean invalidColumn = column < 0 || column >= this.width;
-        boolean invalidRow = row < 0 || row >= this.height;
+        boolean invalidColumn = column < 0 || column >= this.width();
+        boolean invalidRow = row < 0 || row >= this.height();
         if (invalidColumn || invalidRow) {
             throw new IllegalArgumentException("Column or row out of range");
         }
+    }
+
+    private int red(int rgb) {
+        return (rgb >> 16) & 0xFF;
+    }
+
+    private int green(int rgb) {
+        return (rgb >> 8) & 0xFF;
+    }
+
+    private int blue(int rgb) {
+        return (rgb >> 0) & 0xFF;
     }
 }
