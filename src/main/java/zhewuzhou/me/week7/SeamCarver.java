@@ -15,12 +15,8 @@ public class SeamCarver {
         }
         this.colors = new int[picture.width()][picture.height()];
         this.energies = new double[picture.width()][picture.height()];
-        for (int c = 0; c < width(); c++) {
-            for (int r = 0; r < height(); r++) {
-                colors[c][r] = picture.get(c, r).getRGB();
-                energies[c][r] = energy(c, r);
-            }
-        }
+        initColors(picture);
+        initEnergies();
     }
 
     // current picture
@@ -71,7 +67,16 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        return findHorizontalSeam(3).pixelTo;
+        int result[] = new int[this.height()];
+        double minDistance = Double.MAX_VALUE;
+        for (int c = 1; c < this.width() - 1; c++) {
+            SP sp = findHorizontalSeam(c);
+            if (minDistance > sp.distance) {
+                minDistance = sp.distance;
+                result = sp.pixelTo;
+            }
+        }
+        return result;
     }
 
     // remove horizontal seam from current picture
@@ -88,38 +93,33 @@ public class SeamCarver {
         SP sp = new SP(this.height());
         double[][] distances = initEnergyTo();
         sp.pixelTo[0] = column;
-        for (int row = 0; row < this.height() - 1; row++) {
+        distances[column][0] = 1000D;
+        int maxRowIndex = this.height() - 1;
+        for (int row = 0; row < maxRowIndex; row++) {
             int nextColumn = relax(column, distances, row);
             sp.pixelTo[row + 1] = nextColumn;
             column = nextColumn;
         }
-        sp.pixelTo[this.height() - 1] = sp.pixelTo[this.height() - 2];
+        sp.pixelTo[maxRowIndex] = sp.pixelTo[maxRowIndex - 1];
+        sp.distance = distances[sp.pixelTo[maxRowIndex]][maxRowIndex];
         return sp;
     }
 
     private int relax(int column, double[][] distances, int row) {
         int nextChooseColumn = -1;
-        double down = distances[column][row] + this.energies[column][row + 1];
-        double leftDown;
-        double rightDown;
-        if (distances[column][row + 1] > down) {
-            distances[column][row + 1] = down;
-            nextChooseColumn = column;
-        }
-        if (column - 1 >= 0) {
-            leftDown = distances[column][row] + this.energies[column - 1][row + 1];
-            if (distances[column - 1][row + 1] > leftDown) {
-                distances[column - 1][row + 1] = leftDown;
-            }
-            if (distances[column - 1][row + 1] < distances[column][row + 1]) {
-                nextChooseColumn = column - 1;
-            }
-        }
-        rightDown = distances[column][row] + this.energies[column + 1][row + 1];
-        if (distances[column + 1][row + 1] > rightDown) {
-            distances[column + 1][row + 1] = rightDown;
-            if (distances[column + 1][row + 1] < distances[column - 1][row + 1]) {
-                nextChooseColumn = column + 1;
+        int nextRow = row + 1;
+        double minNext = Double.MAX_VALUE;
+        for (int k = -1; k <= 1; k++) {
+            int nextColumn = column + k;
+            if ((nextColumn >= 0) && (nextColumn < this.height())) {
+                double distance = distances[column][row] + this.energies[nextColumn][nextRow];
+                if (distances[nextColumn][nextRow] > distance) {
+                    distances[nextColumn][nextRow] = distance;
+                }
+                if (minNext > distances[nextColumn][nextRow]) {
+                    minNext = distances[nextColumn][nextRow];
+                    nextChooseColumn = nextColumn;
+                }
             }
         }
         return nextChooseColumn;
@@ -161,6 +161,22 @@ public class SeamCarver {
 
         public SP(int steps) {
             this.pixelTo = new int[steps];
+        }
+    }
+
+    private void initEnergies() {
+        for (int c = 0; c < width(); c++) {
+            for (int r = 0; r < height(); r++) {
+                energies[c][r] = this.energy(c, r);
+            }
+        }
+    }
+
+    private void initColors(Picture picture) {
+        for (int c = 0; c < width(); c++) {
+            for (int r = 0; r < height(); r++) {
+                colors[c][r] = picture.get(c, r).getRGB();
+            }
         }
     }
 }

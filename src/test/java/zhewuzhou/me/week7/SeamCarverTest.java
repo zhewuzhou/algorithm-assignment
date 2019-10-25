@@ -66,6 +66,7 @@ public class SeamCarverTest {
 
         assertThat(seamCarver.energy(3, 0), is(1000D));
         assertThat(seamCarver.energy(4, 1), is(closeTo(107.89, 0.01)));
+        assertThat(seamCarver.energy(3, 1), is(closeTo(234.09, 0.01)));
         assertThat(seamCarver.energy(3, 2), is(closeTo(133.07, 0.01)));
         assertThat(seamCarver.energy(2, 3), is(closeTo(174.01, 0.01)));
         assertThat(seamCarver.energy(2, 4), is(1000D));
