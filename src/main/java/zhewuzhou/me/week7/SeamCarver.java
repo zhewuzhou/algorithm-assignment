@@ -79,16 +79,15 @@ public class SeamCarver {
         int[] result = new int[this.height()];
         double minDistance = Double.MAX_VALUE;
         int chooseColumn = -1;
-        for (int c = 1; c < height() - 1; c++) {
-            if (distances[c][height() - 2] < minDistance) {
-                minDistance = distances[c][height() - 2];
+        for (int c = 1; c < width() - 1; c++) {
+            if (distances[c][height() - 1] < minDistance) {
+                minDistance = distances[c][height() - 1];
                 chooseColumn = c;
             }
         }
         result[this.height() - 1] = chooseColumn;
-        result[this.height() - 2] = chooseColumn;
         int prev = chooseColumn;
-        for (int row = height() - 2; row > 0; row--) {
+        for (int row = height() - 1; row > 0; row--) {
             prev = path[prev][row];
             result[row - 1] = prev;
         }
@@ -106,7 +105,7 @@ public class SeamCarver {
     }
 
     private void relax(int row, int column, double[][] distances, int[][] path) {
-        if (height() - 2 > row) {
+        if (row < height() - 1) {
             for (int k = -1; k <= 1; k++) {
                 int newColumn = column + k;
                 if (newColumn >= 0 && newColumn < this.width()) {
