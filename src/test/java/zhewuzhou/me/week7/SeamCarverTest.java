@@ -123,6 +123,14 @@ public class SeamCarverTest {
         seamCarver.removeVerticalSeam(seam);
     }
 
+    @Test
+    public void should_remove_seam_horizontal() {
+        SeamCarver seamCarver = createFromFile(SEAM_6_X_5_PNG);
+        int[] seam = {2, 3, 4, 4, 2, 1};
+
+        seamCarver.removeHorizontalSeam(seam);
+    }
+
     private SeamCarver createFromFile(String fileName) {
         File file = new File(Objects.requireNonNull(this.getClass()
             .getClassLoader()

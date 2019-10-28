@@ -97,7 +97,16 @@ public class SeamCarver {
 
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
-
+        if (null == seam || seam.length != this.width() || this.height() <= 1) {
+            throw new IllegalArgumentException("Invalid seam or can not remove seam.");
+        }
+        int[][] newColors = new int[this.width()][this.height() - 1];
+        for (int c = 0; c < this.width() - 1; c++) {
+            System.arraycopy(this.colors[c], 0, newColors[c], 0, seam[c]);
+            System.arraycopy(this.colors[c], seam[c] + 1, newColors[c], seam[c], this.height() - seam[c] - 1);
+        }
+        this.colors = newColors;
+        this.energies = calculateEnergies();
     }
 
     // remove vertical seam from current picture
