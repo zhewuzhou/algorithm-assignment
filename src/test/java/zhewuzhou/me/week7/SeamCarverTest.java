@@ -147,6 +147,14 @@ public class SeamCarverTest {
         assertThat(seamCarver.findHorizontalSeam(), is(horizontalSeam));
     }
 
+    @Test
+    public void should_find_seam_vertical_image_large() {
+        SeamCarver seamCarver = createFromFile("seam/chameleon.png");
+
+        int[] seam = {0, 1, 1, 1, 1, 1, 1, 1, 0};
+        assertThat(seamCarver.findVerticalSeam(), is(seam));
+    }
+
     private SeamCarver createFromFile(String fileName) {
         File file = new File(Objects.requireNonNull(this.getClass()
             .getClassLoader()
