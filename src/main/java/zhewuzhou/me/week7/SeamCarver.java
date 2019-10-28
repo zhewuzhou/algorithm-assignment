@@ -67,14 +67,30 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        int result[] = new int[this.height()];
+        int[][] path = initSP();
+        double[][] distances = initEnergyTo();
+        for (int c = 1; c < width() - 1; c++) {
+            findHorizontalSeam(0, c, distances, path);
+        }
+        return findSP(path, distances);
+    }
+
+    private int[] findSP(int[][] path, double[][] distances) {
+        int[] result = new int[this.height()];
         double minDistance = Double.MAX_VALUE;
-        for (int c = 1; c < this.width() - 1; c++) {
-            SP sp = findHorizontalSeam(c);
-            if (minDistance > sp.distance) {
-                minDistance = sp.distance;
-                result = sp.pixelTo;
+        int chooseColumn = -1;
+        for (int c = 1; c < height() - 1; c++) {
+            if (distances[c][height() - 2] < minDistance) {
+                minDistance = distances[c][height() - 2];
+                chooseColumn = c;
             }
+        }
+        result[this.height() - 1] = chooseColumn;
+        result[this.height() - 2] = chooseColumn;
+        int prev = chooseColumn;
+        for (int row = height() - 2; row > 0; row--) {
+            prev = path[prev][row];
+            result[row - 1] = prev;
         }
         return result;
     }
@@ -89,40 +105,21 @@ public class SeamCarver {
 
     }
 
-    private SP findHorizontalSeam(int column) {
-        SP sp = new SP(this.height());
-        double[][] distances = initEnergyTo();
-        sp.pixelTo[0] = column;
-        distances[column][0] = 1000D;
-        int maxRowIndex = this.height() - 1;
-        for (int row = 0; row < maxRowIndex; row++) {
-            int nextColumn = relax(column, distances, row);
-            sp.pixelTo[row + 1] = nextColumn;
-            column = nextColumn;
-        }
-        sp.pixelTo[maxRowIndex] = sp.pixelTo[maxRowIndex - 1];
-        sp.distance = distances[sp.pixelTo[maxRowIndex]][maxRowIndex];
-        return sp;
-    }
-
-    private int relax(int column, double[][] distances, int row) {
-        int nextChooseColumn = -1;
-        int nextRow = row + 1;
-        double minNext = Double.MAX_VALUE;
-        for (int k = -1; k <= 1; k++) {
-            int nextColumn = column + k;
-            if ((nextColumn >= 0) && (nextColumn < this.height())) {
-                double distance = distances[column][row] + this.energies[nextColumn][nextRow];
-                if (distances[nextColumn][nextRow] > distance) {
-                    distances[nextColumn][nextRow] = distance;
-                }
-                if (minNext > distances[nextColumn][nextRow]) {
-                    minNext = distances[nextColumn][nextRow];
-                    nextChooseColumn = nextColumn;
+    private void findHorizontalSeam(int row, int column, double[][] distances, int[][] path) {
+        if (height() - 2 > row) {
+            for (int k = -1; k <= 1; k++) {
+                int newColumn = column + k;
+                if (newColumn >= 0 && newColumn < this.width()) {
+                    double currentSP = distances[newColumn][row + 1];
+                    double newSP = distances[column][row] + energies[newColumn][row + 1];
+                    if (currentSP > newSP) {
+                        distances[newColumn][row + 1] = newSP;
+                        path[newColumn][row + 1] = column;
+                    }
+                    findHorizontalSeam(row + 1, newColumn, distances, path);
                 }
             }
         }
-        return nextChooseColumn;
     }
 
     private double[][] initEnergyTo() {
@@ -133,6 +130,16 @@ public class SeamCarver {
             }
         }
         return distances;
+    }
+
+    private int[][] initSP() {
+        int[][] prev = new int[this.width()][this.height()];
+        for (int c = 0; c < this.width(); c++) {
+            for (int r = 1; r < this.height(); r++) {
+                prev[c][r] = -1;
+            }
+        }
+        return prev;
     }
 
     private void checkCoordinate(int column, int row) {
