@@ -103,6 +103,26 @@ public class SeamCarverTest {
         assertThat(seamCarver.findVerticalSeam(), is(this.seam));
     }
 
+    @Test
+    public void should_avoid_removed_item() {
+        int[] s = {0, 1, 2, 3, 4, 5};
+        int[] t = new int[5];
+        int seam = 3;
+        System.arraycopy(s, 0, t, 0, seam);
+        System.arraycopy(s, seam + 1, t, seam, s.length - seam - 1);
+
+        int[] result = {0, 1, 2, 4, 5};
+        assertThat(t, is(result));
+    }
+
+    @Test
+    public void should_remove_seam_vertically() {
+        SeamCarver seamCarver = createFromFile(SEAM_6_X_5_PNG);
+        int[] seam = seamCarver.findVerticalSeam();
+
+        seamCarver.removeVerticalSeam(seam);
+    }
+
     private SeamCarver createFromFile(String fileName) {
         File file = new File(Objects.requireNonNull(this.getClass()
             .getClassLoader()

@@ -16,7 +16,7 @@ public class SeamCarver {
         this.colors = new int[picture.width()][picture.height()];
         this.energies = new double[picture.width()][picture.height()];
         initColors(picture);
-        initEnergies();
+        this.energies = calculateEnergies();
     }
 
     // current picture
@@ -77,7 +77,7 @@ public class SeamCarver {
 
     private int[] retrieveSP(int[][] path, double[][] distances) {
         int lastRow = height() - 1;
-        int[] result = new int[lastRow+1];
+        int[] result = new int[lastRow + 1];
         double minDistance = Double.MAX_VALUE;
         int chooseColumn = -1;
         for (int c = 0; c < width() - 1; c++) {
@@ -102,7 +102,21 @@ public class SeamCarver {
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-
+        if (null == seam || seam.length != this.height() || this.width() <= 1) {
+            throw new IllegalArgumentException("Invalid seam or can not remove seam.");
+        }
+        int[][] newColors = new int[this.width() - 1][this.height()];
+        for (int c = 0; c < this.width() - 2; c++) {
+            for (int r = 0; r < this.height() - 1; r++) {
+                if (seam[r] < c) {
+                    newColors[c][r] = this.colors[c][r];
+                } else if (seam[r] > c) {
+                    newColors[c][r] = this.colors[c + 1][r];
+                }
+            }
+        }
+        this.colors = newColors;
+        this.energies = calculateEnergies();
     }
 
     private void relax(int row, int column, double[][] distances, int[][] path) {
@@ -162,12 +176,14 @@ public class SeamCarver {
         return (rgb >> 0) & 0xFF;
     }
 
-    private void initEnergies() {
+    private double[][] calculateEnergies() {
+        double[][] result = new double[this.width()][this.height()];
         for (int c = 0; c < width(); c++) {
             for (int r = 0; r < height(); r++) {
-                energies[c][r] = this.energy(c, r);
+                result[c][r] = this.energy(c, r);
             }
         }
+        return result;
     }
 
     private void initColors(Picture picture) {
