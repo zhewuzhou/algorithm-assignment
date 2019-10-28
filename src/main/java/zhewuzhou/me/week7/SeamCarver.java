@@ -62,37 +62,22 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        return null;
+        int[][] path = initSP();
+        double[][] distances = initEnergyTo(1, 0);
+        for (int r = 0; r < height() - 1; r++) {
+            relaxHorizontally(r, 0, distances, path);
+        }
+        return retrieveHorizontalSP(path, distances);
     }
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
         int[][] path = initSP();
-        double[][] distances = initEnergyTo();
+        double[][] distances = initEnergyTo(0, 1);
         for (int c = 0; c < width() - 1; c++) {
-            relax(0, c, distances, path);
+            relaxVertically(0, c, distances, path);
         }
-        return retrieveSP(path, distances);
-    }
-
-    private int[] retrieveSP(int[][] path, double[][] distances) {
-        int lastRow = height() - 1;
-        int[] result = new int[lastRow + 1];
-        double minDistance = Double.MAX_VALUE;
-        int chooseColumn = -1;
-        for (int c = 0; c < width() - 1; c++) {
-            if (distances[c][lastRow] < minDistance) {
-                minDistance = distances[c][lastRow];
-                chooseColumn = c;
-            }
-        }
-        result[lastRow] = chooseColumn;
-        int prev = chooseColumn;
-        for (int row = lastRow; row > 0; row--) {
-            prev = path[prev][row];
-            result[row - 1] = prev;
-        }
-        return result;
+        return retrieveVerticalSP(path, distances);
     }
 
     // remove horizontal seam from current picture
@@ -128,7 +113,7 @@ public class SeamCarver {
         this.energies = calculateEnergies();
     }
 
-    private void relax(int row, int column, double[][] distances, int[][] path) {
+    private void relaxVertically(int row, int column, double[][] distances, int[][] path) {
         if (row < height() - 1) {
             for (int k = -1; k <= 1; k++) {
                 int newColumn = column + k;
@@ -139,16 +124,34 @@ public class SeamCarver {
                         distances[newColumn][row + 1] = newSP;
                         path[newColumn][row + 1] = column;
                     }
-                    relax(row + 1, newColumn, distances, path);
+                    relaxVertically(row + 1, newColumn, distances, path);
                 }
             }
         }
     }
 
-    private double[][] initEnergyTo() {
+    private void relaxHorizontally(int row, int column, double[][] distances, int[][] path) {
+        if (column < width() - 1) {
+            for (int k = -1; k <= 1; k++) {
+                int newRow = row + k;
+                int nextColumn = column + 1;
+                if (newRow >= 0 && newRow < this.height()) {
+                    double currentSP = distances[nextColumn][newRow];
+                    double newSP = distances[column][row] + energies[nextColumn][newRow];
+                    if (currentSP > newSP) {
+                        distances[nextColumn][newRow] = newSP;
+                        path[nextColumn][newRow] = row;
+                    }
+                    relaxHorizontally(newRow, nextColumn, distances, path);
+                }
+            }
+        }
+    }
+
+    private double[][] initEnergyTo(int colStart, int rowStart) {
         double[][] distances = new double[this.width()][this.height()];
-        for (int c = 0; c < this.width(); c++) {
-            for (int r = 1; r < this.height(); r++) {
+        for (int c = colStart; c < this.width(); c++) {
+            for (int r = rowStart; r < this.height(); r++) {
                 distances[c][r] = Double.MAX_VALUE;
             }
         }
@@ -201,5 +204,45 @@ public class SeamCarver {
                 colors[c][r] = picture.get(c, r).getRGB();
             }
         }
+    }
+
+    private int[] retrieveVerticalSP(int[][] path, double[][] distances) {
+        int lastRow = height() - 1;
+        int[] result = new int[lastRow + 1];
+        double minDistance = Double.MAX_VALUE;
+        int chooseColumn = -1;
+        for (int c = 0; c < width() - 1; c++) {
+            if (distances[c][lastRow] < minDistance) {
+                minDistance = distances[c][lastRow];
+                chooseColumn = c;
+            }
+        }
+        result[lastRow] = chooseColumn;
+        int prev = chooseColumn;
+        for (int row = lastRow; row > 0; row--) {
+            prev = path[prev][row];
+            result[row - 1] = prev;
+        }
+        return result;
+    }
+
+    private int[] retrieveHorizontalSP(int[][] path, double[][] distances) {
+        int lastColumn = width() - 1;
+        int[] result = new int[lastColumn + 1];
+        double minDistance = Double.MAX_VALUE;
+        int chooseRow = -1;
+        for (int r = 0; r < height() - 1; r++) {
+            if (distances[lastColumn][r] < minDistance) {
+                minDistance = distances[lastColumn][r];
+                chooseRow = r;
+            }
+        }
+        result[lastColumn] = chooseRow;
+        int prev = chooseRow;
+        for (int column = lastColumn; column > 0; column--) {
+            prev = path[column][prev];
+            result[column - 1] = prev;
+        }
+        return result;
     }
 }

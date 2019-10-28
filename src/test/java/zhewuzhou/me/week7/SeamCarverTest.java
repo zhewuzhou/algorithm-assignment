@@ -131,6 +131,22 @@ public class SeamCarverTest {
         seamCarver.removeHorizontalSeam(seam);
     }
 
+    @Test
+    public void should_find_seam_horizontal() {
+        SeamCarver seamCarver = createFromFile(SEAM_6_X_5_PNG);
+
+        int[] horizontalSeam = {1, 2, 1, 2, 1, 0};
+        assertThat(seamCarver.findHorizontalSeam(), is(horizontalSeam));
+    }
+
+    @Test
+    public void should_find_seam_horizontal_stripes() {
+        SeamCarver seamCarver = createFromFile("seam/stripes.png");
+
+        int[] horizontalSeam = {0, 1, 1, 1, 1, 1, 1, 1, 0};
+        assertThat(seamCarver.findHorizontalSeam(), is(horizontalSeam));
+    }
+
     private SeamCarver createFromFile(String fileName) {
         File file = new File(Objects.requireNonNull(this.getClass()
             .getClassLoader()
