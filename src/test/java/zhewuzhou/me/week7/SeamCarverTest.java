@@ -24,7 +24,13 @@ public class SeamCarverTest {
 
     @Parameters
     public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][]{{"seam/12x10.png", new int[]{6, 7, 7, 6, 6, 7, 7, 7, 8, 7}}});
+        return Arrays.asList(new Object[][]{{"seam/12x10.png", new int[]{6, 7, 7, 6, 6, 7, 7, 7, 8, 7}},
+            {"seam/10x12.png", new int[]{5, 6, 7, 8, 7, 7, 6, 7, 6, 5, 6, 5}},
+            {"seam/10x10.png", new int[]{6, 7, 7, 7, 7, 7, 8, 8, 7, 6}},
+            {"seam/stripes.png", new int[]{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}},
+            {"seam/diagonals.png", new int[]{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}},
+            {"seam/7x10.png", new int[]{2, 3, 4, 3, 4, 3, 3, 2, 2, 1}},
+        });
     }
 
     @Parameter(0)

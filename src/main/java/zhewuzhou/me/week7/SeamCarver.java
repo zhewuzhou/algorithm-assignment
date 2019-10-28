@@ -69,25 +69,26 @@ public class SeamCarver {
     public int[] findVerticalSeam() {
         int[][] path = initSP();
         double[][] distances = initEnergyTo();
-        for (int c = 1; c < width() - 1; c++) {
+        for (int c = 0; c < width() - 1; c++) {
             relax(0, c, distances, path);
         }
         return retrieveSP(path, distances);
     }
 
     private int[] retrieveSP(int[][] path, double[][] distances) {
-        int[] result = new int[this.height()];
+        int lastRow = height() - 1;
+        int[] result = new int[lastRow+1];
         double minDistance = Double.MAX_VALUE;
         int chooseColumn = -1;
-        for (int c = 1; c < width() - 1; c++) {
-            if (distances[c][height() - 1] < minDistance) {
-                minDistance = distances[c][height() - 1];
+        for (int c = 0; c < width() - 1; c++) {
+            if (distances[c][lastRow] < minDistance) {
+                minDistance = distances[c][lastRow];
                 chooseColumn = c;
             }
         }
-        result[this.height() - 1] = chooseColumn;
+        result[lastRow] = chooseColumn;
         int prev = chooseColumn;
-        for (int row = height() - 1; row > 0; row--) {
+        for (int row = lastRow; row > 0; row--) {
             prev = path[prev][row];
             result[row - 1] = prev;
         }
