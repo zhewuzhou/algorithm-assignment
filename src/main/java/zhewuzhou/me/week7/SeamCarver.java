@@ -70,12 +70,12 @@ public class SeamCarver {
         int[][] path = initSP();
         double[][] distances = initEnergyTo();
         for (int c = 1; c < width() - 1; c++) {
-            findHorizontalSeam(0, c, distances, path);
+            relax(0, c, distances, path);
         }
-        return findSP(path, distances);
+        return retrieveSP(path, distances);
     }
 
-    private int[] findSP(int[][] path, double[][] distances) {
+    private int[] retrieveSP(int[][] path, double[][] distances) {
         int[] result = new int[this.height()];
         double minDistance = Double.MAX_VALUE;
         int chooseColumn = -1;
@@ -105,7 +105,7 @@ public class SeamCarver {
 
     }
 
-    private void findHorizontalSeam(int row, int column, double[][] distances, int[][] path) {
+    private void relax(int row, int column, double[][] distances, int[][] path) {
         if (height() - 2 > row) {
             for (int k = -1; k <= 1; k++) {
                 int newColumn = column + k;
@@ -116,7 +116,7 @@ public class SeamCarver {
                         distances[newColumn][row + 1] = newSP;
                         path[newColumn][row + 1] = column;
                     }
-                    findHorizontalSeam(row + 1, newColumn, distances, path);
+                    relax(row + 1, newColumn, distances, path);
                 }
             }
         }
@@ -160,15 +160,6 @@ public class SeamCarver {
 
     private int blue(int rgb) {
         return (rgb >> 0) & 0xFF;
-    }
-
-    private class SP {
-        int[] pixelTo;
-        double distance;
-
-        public SP(int steps) {
-            this.pixelTo = new int[steps];
-        }
     }
 
     private void initEnergies() {
