@@ -1,7 +1,24 @@
 package zhewuzhou.me.week8;
 
+import edu.princeton.cs.algs4.In;
+
+import java.util.Map;
+import java.util.TreeMap;
+
 public class BaseballElimination {
+    private final Map<String, Team> teams = new TreeMap<>();
+    private int totalTeam;
+
     BaseballElimination(String filename) {
+        In matches = new In(filename);
+        while (matches.exists() && matches.hasNextLine()) {
+            String line = matches.readLine();
+            if (!line.contains(" ")) {
+                this.totalTeam = Integer.parseInt(line);
+            } else {
+
+            }
+        }
     }
 
     // number of teams
@@ -42,5 +59,13 @@ public class BaseballElimination {
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
         return null;
+    }
+
+    private class Team {
+        private String name;
+        private int wins;
+        private int losses;
+        private int remaining;
+        private Map<String, Integer> against = new TreeMap<>();
     }
 }
