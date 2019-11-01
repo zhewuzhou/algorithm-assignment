@@ -1,10 +1,11 @@
 package zhewuzhou.me.week8;
 
+import edu.princeton.cs.algs4.FlowEdge;
+import edu.princeton.cs.algs4.FlowNetwork;
+import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class BaseballElimination {
     static final String SPACE = " ";
@@ -59,7 +60,44 @@ public class BaseballElimination {
 
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
-        return null;
+        Team targetTeam = checkAndFetch(team);
+        Set<int[]> uniquePair = new HashSet<>();
+        Set<Integer> uniqueV = new HashSet<>();
+        if (targetTeam.wins + targetTeam.remaining < winner.wins) {
+            targetTeam.certificateOfElimination.add(this.winner.name);
+        } else {
+            for (int i = 0; i < this.totalTeam; i++) {
+                for (int j = 0; j < this.totalTeam; j++) {
+                    if (i != j && i < j && this.against[i][j] != 0) {
+                        int[] teamPair = {i, j};
+                        uniquePair.add(teamPair);
+                        uniqueV.add(i);
+                        uniqueV.add(j);
+                    }
+                }
+            }
+            int totalVertex = uniquePair.size() + uniqueV.size() + 2;
+            FlowNetwork network = new FlowNetwork(totalVertex);
+            HashMap<String, Integer> vertexMap = new HashMap<>();
+            int vSequence = 1;
+            for (int[] pair : uniquePair) {
+                network.addEdge(new FlowEdge(0, vSequence, this.against[pair[0]][pair[1]]));
+                vertexMap.put("" + pair[0] + "_" + pair[1], vSequence);
+                vSequence++;
+            }
+            for (int ut : uniqueV) {
+                for (String key : vertexMap.keySet()) {
+                    if (key.contains(String.valueOf(ut))) {
+                        network.addEdge(new FlowEdge(vertexMap.get(key), vSequence, Double.POSITIVE_INFINITY));
+                    }
+                }
+                network.addEdge(new FlowEdge(vSequence, totalVertex - 1, targetTeam.wins + targetTeam.remaining - targetTeam.wins));
+                vSequence++;
+            }
+            FordFulkerson ff = new FordFulkerson(network, 0, totalVertex - 1);
+            
+        }
+        return targetTeam.certificateOfElimination;
     }
 
     private class Team {
@@ -69,6 +107,7 @@ public class BaseballElimination {
         private int remaining;
         private boolean isEliminated;
         private Map<String, Integer> teamVs = new TreeMap<>();
+        private List<String> certificateOfElimination = new ArrayList<>();
     }
 
     private void createMap() {
