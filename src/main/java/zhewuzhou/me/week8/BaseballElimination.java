@@ -17,6 +17,76 @@ public class BaseballElimination {
     private String[] names;
 
     BaseballElimination(String filename) {
+        parseFile(filename);
+        createMap();
+    }
+
+    // number of teams
+    public int numberOfTeams() {
+        return this.totalTeam;
+    }
+
+    // all teams
+    public Iterable<String> teams() {
+        return this.teams.keySet();
+    }
+
+    // number of wins for given team
+    public int wins(String team) {
+        return checkAndFetch(team).wins;
+    }
+
+    // number of losses for given team
+    public int losses(String team) {
+        return checkAndFetch(team).losses;
+    }
+
+    // number of remaining games for given team
+    public int remaining(String team) {
+        return checkAndFetch(team).remaining;
+    }
+
+    // number of remaining games between team1 and team2
+    public int against(String team1, String team2) {
+        return checkAndFetch(team1).teamVs.get(team2);
+    }
+
+    // is given team eliminated?
+    public boolean isEliminated(String team) {
+        return checkAndFetch(team).isEliminated;
+    }
+
+    // subset R of teams that eliminates given team; null if not eliminated
+    public Iterable<String> certificateOfElimination(String team) {
+        return null;
+    }
+
+    private class Team {
+        private String name;
+        private int wins;
+        private int losses;
+        private int remaining;
+        private boolean isEliminated;
+        private Map<String, Integer> teamVs = new TreeMap<>();
+    }
+
+    private void createMap() {
+        for (int i = 0; i < this.totalTeam; i++) {
+            Team t = new Team();
+            t.name = this.names[i];
+            t.wins = this.wins[i];
+            t.losses = this.loses[i];
+            t.remaining = this.remaining[i];
+            TreeMap<String, Integer> teamVs = new TreeMap<>();
+            for (int j = 0; j < this.totalTeam; j++) {
+                teamVs.put(this.names[j], this.against[i][j]);
+            }
+            t.teamVs = teamVs;
+            this.teams.put(t.name, t);
+        }
+    }
+
+    private void parseFile(String filename) {
         In matches = new In(filename);
         int teamIndex = 0;
         while (matches.exists() && matches.hasNextLine()) {
@@ -44,67 +114,13 @@ public class BaseballElimination {
                 teamIndex++;
             }
         }
-        for (int i = 0; i < this.totalTeam; i++) {
-            Team t = new Team();
-            t.name = this.names[i];
-            t.wins = this.wins[i];
-            t.losses = this.loses[i];
-            t.remaining = this.remaining[i];
-            TreeMap<String, Integer> teamVs = new TreeMap<>();
-            for (int j = 0; j < this.totalTeam; j++) {
-                teamVs.put(this.names[j], this.against[i][j]);
-            }
-            t.teamVs = teamVs;
-            this.teams.put(t.name, t);
+    }
+
+    private Team checkAndFetch(String name) {
+        Team team = teams.get(name);
+        if (null == team) {
+            throw new IllegalArgumentException("Not a valid team name");
         }
-    }
-
-    // number of teams
-    public int numberOfTeams() {
-        return this.totalTeam;
-    }
-
-    // all teams
-    public Iterable<String> teams() {
-        return this.teams.keySet();
-    }
-
-    // number of wins for given team
-    public int wins(String team) {
-        return teams.get(team).wins;
-    }
-
-    // number of losses for given team
-    public int losses(String team) {
-        return teams.get(team).losses;
-    }
-
-    // number of remaining games for given team
-    public int remaining(String team) {
-        return teams.get(team).remaining;
-    }
-
-    // number of remaining games between team1 and team2
-    public int against(String team1, String team2) {
-        return teams.get(team1).teamVs.get(team2);
-    }
-
-    // is given team eliminated?
-    public boolean isEliminated(String team) {
-        return false;
-    }
-
-    // subset R of teams that eliminates given team; null if not eliminated
-    public Iterable<String> certificateOfElimination(String team) {
-        return null;
-    }
-
-    private class Team {
-        private String name;
-        private int wins;
-        private int losses;
-        private int remaining;
-        private boolean isEliminated;
-        private Map<String, Integer> teamVs = new TreeMap<>();
+        return team;
     }
 }
