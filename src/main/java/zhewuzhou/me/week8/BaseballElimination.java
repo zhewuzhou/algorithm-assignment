@@ -9,6 +9,7 @@ import java.util.TreeMap;
 public class BaseballElimination {
     static final String SPACE = " ";
     private final Map<String, Team> teams = new TreeMap<>();
+    private Team winner;
     private int totalTeam;
     private int[][] against;
     private int[] wins;
@@ -71,6 +72,7 @@ public class BaseballElimination {
     }
 
     private void createMap() {
+        int mostWins = 0;
         for (int i = 0; i < this.totalTeam; i++) {
             Team t = new Team();
             t.name = this.names[i];
@@ -83,6 +85,9 @@ public class BaseballElimination {
             }
             t.teamVs = teamVs;
             this.teams.put(t.name, t);
+            if (t.wins > mostWins) {
+                this.winner = t;
+            }
         }
     }
 
