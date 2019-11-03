@@ -17,6 +17,7 @@ public class BaseballElimination {
     private int[] loses;
     private int[] remaining;
     private String[] names;
+    private ArrayList<int[]> uniquePair = new ArrayList<>();
 
     BaseballElimination(String filename) {
         parseFile(filename);
@@ -61,47 +62,66 @@ public class BaseballElimination {
     // subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
         Team targetTeam = checkAndFetch(team);
-        Set<int[]> uniquePair = new HashSet<>();
-        Set<Integer> uniqueV = new HashSet<>();
         if (targetTeam.wins + targetTeam.remaining < winner.wins) {
             targetTeam.certificateOfElimination.add(this.winner.name);
         } else {
-            for (int i = 0; i < this.totalTeam; i++) {
-                for (int j = 0; j < this.totalTeam; j++) {
-                    if (i != j && i < j && this.against[i][j] != 0) {
-                        int[] teamPair = {i, j};
-                        uniquePair.add(teamPair);
-                        uniqueV.add(i);
-                        uniqueV.add(j);
-                    }
-                }
-            }
-            int totalVertex = uniquePair.size() + uniqueV.size() + 2;
-            FlowNetwork network = new FlowNetwork(totalVertex);
-            HashMap<String, Integer> vertexMap = new HashMap<>();
-            int vSequence = 1;
+            int currentVertex = 1;
+            Map<Integer, Integer> vertexMap = new HashMap<>();
+            Map<Integer, List<Integer>> vertexParent = new HashMap<>();
+            ArrayList<FlowEdge> edges = new ArrayList<>();
+            Set<Integer> joinedTeam = new HashSet<>();
+            int fullCapacity = 0;
             for (int[] pair : uniquePair) {
-                network.addEdge(new FlowEdge(0, vSequence, this.against[pair[0]][pair[1]]));
-                vertexMap.put("" + pair[0] + "_" + pair[1], vSequence);
-                vSequence++;
+                if (pair[0] != targetTeam.id && pair[1] != targetTeam.id) {
+                    int capacity = this.against[pair[0]][pair[1]];
+                    fullCapacity += capacity;
+                    edges.add(new FlowEdge(0, currentVertex, capacity));
+                    updateParent(vertexParent, pair, currentVertex);
+                    joinedTeam.add(pair[0]);
+                    joinedTeam.add(pair[1]);
+                    currentVertex++;
+                }
             }
-            for (int ut : uniqueV) {
-                for (String key : vertexMap.keySet()) {
-                    if (key.contains(String.valueOf(ut))) {
-                        network.addEdge(new FlowEdge(vertexMap.get(key), vSequence, Double.POSITIVE_INFINITY));
+            int totalVertexNum = currentVertex + joinedTeam.size() + 1;
+            for (int id : joinedTeam) {
+                for (int parent : vertexParent.get(id)) {
+                    edges.add(new FlowEdge(parent, currentVertex, Double.POSITIVE_INFINITY));
+                }
+                edges.add(new FlowEdge(currentVertex, totalVertexNum - 1, targetTeam.wins + targetTeam.remaining - wins[id]));
+                vertexMap.put(currentVertex, id);
+                currentVertex++;
+            }
+            FlowNetwork network = new FlowNetwork(totalVertexNum);
+            for (FlowEdge e : edges) {
+                network.addEdge(e);
+            }
+            FordFulkerson algorithm = new FordFulkerson(network, 0, totalVertexNum - 1);
+            if (algorithm.value() != fullCapacity) {
+                for (int v : vertexMap.keySet()) {
+                    if (algorithm.inCut(v)) {
+                        targetTeam.certificateOfElimination.add(names[vertexMap.get(v)]);
                     }
                 }
-                network.addEdge(new FlowEdge(vSequence, totalVertex - 1, targetTeam.wins + targetTeam.remaining - targetTeam.wins));
-                vSequence++;
             }
-            FordFulkerson ff = new FordFulkerson(network, 0, totalVertex - 1);
-            
         }
         return targetTeam.certificateOfElimination;
     }
 
+    private void updateParent(Map<Integer, List<Integer>> vertexParent, int[] teamIds, int vertexId) {
+        for (int id : teamIds) {
+            if (vertexParent.get(id) == null) {
+                ArrayList<Integer> parents = new ArrayList<>();
+                parents.add(vertexId);
+                vertexParent.put(id, parents);
+            } else {
+                vertexParent.get(id).add(vertexId);
+            }
+        }
+    }
+
     private class Team {
         private String name;
+        private int id;
         private int wins;
         private int losses;
         private int remaining;
@@ -118,6 +138,7 @@ public class BaseballElimination {
             t.wins = this.wins[i];
             t.losses = this.loses[i];
             t.remaining = this.remaining[i];
+            t.id = i;
             TreeMap<String, Integer> teamVs = new TreeMap<>();
             for (int j = 0; j < this.totalTeam; j++) {
                 teamVs.put(this.names[j], this.against[i][j]);
@@ -126,6 +147,14 @@ public class BaseballElimination {
             this.teams.put(t.name, t);
             if (t.wins > mostWins) {
                 this.winner = t;
+            }
+        }
+        for (int i = 0; i < this.totalTeam; i++) {
+            for (int j = 0; j < this.totalTeam; j++) {
+                if (i != j && i < j) {
+                    int[] teamPair = {i, j};
+                    uniquePair.add(teamPair);
+                }
             }
         }
     }
