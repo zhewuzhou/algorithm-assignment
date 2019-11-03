@@ -63,6 +63,7 @@ public class BaseballElimination {
     public Iterable<String> certificateOfElimination(String team) {
         Team targetTeam = checkAndFetch(team);
         if (targetTeam.wins + targetTeam.remaining < winner.wins) {
+            targetTeam.isEliminated = true;
             targetTeam.certificateOfElimination.add(this.winner.name);
         } else {
             int currentVertex = 1;
@@ -97,6 +98,7 @@ public class BaseballElimination {
             }
             FordFulkerson algorithm = new FordFulkerson(network, 0, totalVertexNum - 1);
             if (algorithm.value() != fullCapacity) {
+                targetTeam.isEliminated = true;
                 for (int v : vertexMap.keySet()) {
                     if (algorithm.inCut(v)) {
                         targetTeam.certificateOfElimination.add(names[vertexMap.get(v)]);
@@ -104,7 +106,7 @@ public class BaseballElimination {
                 }
             }
         }
-        return targetTeam.certificateOfElimination;
+        return targetTeam.isEliminated ? targetTeam.certificateOfElimination : null;
     }
 
     private void updateParent(Map<Integer, List<Integer>> vertexParent, int[] teamIds, int vertexId) {
