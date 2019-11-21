@@ -16,6 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class BoggleSolverTest {
     private static BoggleSolver solver;
     private static SampleSolver sampleSolver;
+    private static AnotherSampleSolver anotherSampleSolver;
 
     @BeforeClass
     public static void createSolver() {
@@ -26,6 +27,7 @@ public class BoggleSolverTest {
         }
         solver = new BoggleSolver(words.stream().toArray(String[]::new));
         sampleSolver = new SampleSolver(words.stream().toArray(String[]::new));
+        anotherSampleSolver = new AnotherSampleSolver(words.stream().toArray(String[]::new));
     }
 
     @Test
@@ -41,7 +43,7 @@ public class BoggleSolverTest {
     @Test
     public void shouldRunNormalBoardSampleBoard() {
         BoggleBoard board = new BoggleBoard("boggle/board4x4.txt");
-        Iterable<String> iterableResult = sampleSolver.getAllValidWords(board);
+        Iterable<String> iterableResult = anotherSampleSolver.getAllValidWords(board);
 
         List<String> result = stream(iterableResult.spliterator(), false).collect(toList());
 

@@ -1,23 +1,21 @@
 package zhewuzhou.me.week9;
 
-import edu.princeton.cs.algs4.TrieST;
+import edu.princeton.cs.algs4.TrieSET;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import static java.lang.Boolean.TRUE;
-
 public class BoggleSolver {
-    private TrieST<Boolean> tst = new TrieST<>();
+    private TrieSET tst = new TrieSET();
     private Set<String> validWords = new HashSet<>();
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
         for (String s : dictionary) {
-            tst.put(s, TRUE);
+            tst.add(s);
         }
     }
 
@@ -61,21 +59,12 @@ public class BoggleSolver {
                     int newR = r + ri;
                     int newC = c + ci;
                     if (isNeighbour && isValidPosition(newR, newC, board) && !visited[newR][newC]) {
-                        dfs(newR, newC, board, prefix, cloneVisited(visited));
+                        dfs(newR, newC, board, prefix, visited);
                     }
                 }
             }
         }
-    }
-
-    private boolean[][] cloneVisited(boolean[][] currentVisited) {
-        int row = currentVisited.length;
-        int col = currentVisited[0].length;
-        boolean[][] newVisited = new boolean[row][col];
-        for (int r = 0; r < row; r++) {
-            System.arraycopy(currentVisited[r], 0, newVisited[r], 0, col);
-        }
-        return newVisited;
+        visited[r][c] = false;
     }
 
     private boolean isEmptyPrefix(String newPrefix) {
