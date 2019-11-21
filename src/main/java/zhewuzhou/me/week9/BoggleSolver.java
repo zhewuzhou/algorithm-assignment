@@ -3,13 +3,15 @@ package zhewuzhou.me.week9;
 import edu.princeton.cs.algs4.TST;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import static java.lang.Boolean.TRUE;
 
 public class BoggleSolver {
     private TST<Boolean> tst = new TST<>();
+    private Set<String> validWords = new HashSet<>();
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
@@ -21,7 +23,6 @@ public class BoggleSolver {
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
-        ArrayList<String> result = new ArrayList<>();
         int rows = board.rows();
         int cols = board.cols();
         for (int r = 0; r < rows; r++) {
@@ -34,7 +35,7 @@ public class BoggleSolver {
                 }
             }
         }
-        return result;
+        return validWords;
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
@@ -44,16 +45,24 @@ public class BoggleSolver {
     }
 
     public void dfs(int r, int c, BoggleBoard board, String prefix, boolean[][] visited) {
-        System.out.println("Position: " + r + " " + c + " Node Is: " + board.getLetter(r, c) + " Prefix: " + prefix);
         visited[r][c] = true;
         prefix += board.getLetter(r, c);
-        for (int ri = -1; ri <= 1; ri++) {
-            for (int ci = -1; ci <= 1; ci++) {
-                boolean isNeighbour = !(ri == 0 && ci == 0);
-                int newR = r + ri;
-                int newC = c + ci;
-                if (isNeighbour && isValidPosition(newR, newC, board) && !visited[newR][newC]) {
-                    dfs(newR, newC, board, prefix, cloneVisited(visited));
+        boolean shouldGoingForward = false;
+        if (tst.contains(prefix)) {
+            validWords.add(prefix);
+            shouldGoingForward = true;
+        } else if (!isEmptyPrefix(prefix)) {
+            shouldGoingForward = true;
+        }
+        if (shouldGoingForward) {
+            for (int ri = -1; ri <= 1; ri++) {
+                for (int ci = -1; ci <= 1; ci++) {
+                    boolean isNeighbour = !(ri == 0 && ci == 0);
+                    int newR = r + ri;
+                    int newC = c + ci;
+                    if (isNeighbour && isValidPosition(newR, newC, board) && !visited[newR][newC]) {
+                        dfs(newR, newC, board, prefix, cloneVisited(visited));
+                    }
                 }
             }
         }
@@ -75,17 +84,5 @@ public class BoggleSolver {
 
     private boolean isValidPosition(int r, int c, BoggleBoard board) {
         return (r >= 0 && r < board.rows()) && (c >= 0 && c < board.cols());
-    }
-
-    private boolean isInPath(Stack<SimpleEntry<Integer, Integer>> path, int r, int c) {
-        return path.stream().anyMatch(s -> s.getKey() == r && s.getValue() == c);
-    }
-
-    private String buildPrefix(Stack<SimpleEntry<Integer, Integer>> path, BoggleBoard board) {
-        StringBuilder builder = new StringBuilder();
-        path.forEach(s -> {
-            builder.append(board.getLetter(s.getKey(), s.getValue()));
-        });
-        return builder.toString();
     }
 }
