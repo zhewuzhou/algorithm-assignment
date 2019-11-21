@@ -1,6 +1,6 @@
 package zhewuzhou.me.week9;
 
-import edu.princeton.cs.algs4.TST;
+import edu.princeton.cs.algs4.TrieST;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import java.util.Stack;
 import static java.lang.Boolean.TRUE;
 
 public class BoggleSolver {
-    private TST<Boolean> tst = new TST<>();
+    private TrieST<Boolean> tst = new TrieST<>();
     private Set<String> validWords = new HashSet<>();
 
     // Initializes the data structure using the given array of strings as the dictionary.
@@ -48,7 +48,7 @@ public class BoggleSolver {
         visited[r][c] = true;
         prefix += board.getLetter(r, c);
         boolean shouldGoingForward = false;
-        if (tst.contains(prefix)) {
+        if (prefix.length() > 2 && tst.contains(prefix)) {
             validWords.add(prefix);
             shouldGoingForward = true;
         } else if (!isEmptyPrefix(prefix)) {
