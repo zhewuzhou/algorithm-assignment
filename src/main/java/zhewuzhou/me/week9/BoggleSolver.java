@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.TST;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 import static java.lang.Boolean.TRUE;
@@ -30,7 +29,8 @@ public class BoggleSolver {
                 if (!isEmptyPrefix("" + board.getLetter(r, c))) {
                     Stack<SimpleEntry<Integer, Integer>> prefix = new Stack<>();
                     prefix.push(new SimpleEntry<>(r, c));
-                    boardDFS(r, c, board, result, prefix);
+                    boolean[][] visited = new boolean[board.rows()][board.cols()];
+                    dfs(r, c, board, "", visited);
                 }
             }
         }
@@ -43,28 +43,30 @@ public class BoggleSolver {
         return 0;
     }
 
-    private void boardDFS(int i, int j, BoggleBoard board, List<String> result, Stack<SimpleEntry<Integer, Integer>> path) {
+    public void dfs(int r, int c, BoggleBoard board, String prefix, boolean[][] visited) {
+        System.out.println("Position: " + r + " " + c + " Node Is: " + board.getLetter(r, c) + " Prefix: " + prefix);
+        visited[r][c] = true;
+        prefix += board.getLetter(r, c);
         for (int ri = -1; ri <= 1; ri++) {
             for (int ci = -1; ci <= 1; ci++) {
-                boolean notSamePosition = !(ri == 0 && ci == 0);
-                int newRow = i + ri;
-                int newCol = j + ci;
-                if (notSamePosition &&
-                    isValidPosition(newRow, newCol, board) &&
-                    !isInPath(path, newRow, newCol)) {
-                    String prefix = buildPrefix(path, board);
-                    String newPrefix = prefix + (board.getLetter(newRow, newCol));
-                    if (tst.get(newPrefix) != null) {
-                        result.add(newPrefix);
-                        path.push(new SimpleEntry<>(newRow, newCol));
-                        boardDFS(newRow, newCol, board, result, path);
-                    } else if (!isEmptyPrefix(newPrefix)) {
-                        path.push(new SimpleEntry<>(newRow, newCol));
-                        boardDFS(newRow, newCol, board, result, path);
-                    }
+                boolean isNeighbour = !(ri == 0 && ci == 0);
+                int newR = r + ri;
+                int newC = c + ci;
+                if (isNeighbour && isValidPosition(newR, newC, board) && !visited[newR][newC]) {
+                    dfs(newR, newC, board, prefix, cloneVisited(visited));
                 }
             }
         }
+    }
+
+    private boolean[][] cloneVisited(boolean[][] currentVisited) {
+        int row = currentVisited.length;
+        int col = currentVisited[0].length;
+        boolean[][] newVisited = new boolean[row][col];
+        for (int r = 0; r < row; r++) {
+            System.arraycopy(currentVisited[r], 0, newVisited[r], 0, col);
+        }
+        return newVisited;
     }
 
     private boolean isEmptyPrefix(String newPrefix) {

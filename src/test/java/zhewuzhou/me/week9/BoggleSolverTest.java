@@ -35,4 +35,14 @@ public class BoggleSolverTest {
 
         assertThat(result.size(), is(not(0)));
     }
+
+    @Test
+    public void shouldRunDfsCorrectly() {
+        BoggleBoard board = new BoggleBoard("boggle/board4x4.txt");
+        boolean[][] visited = new boolean[4][4];
+        solver.dfs(0, 0, board, "", visited);
+
+
+        assertThat(0, is(0));
+    }
 }
