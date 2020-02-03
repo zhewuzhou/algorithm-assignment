@@ -31,16 +31,22 @@ fun String.swap(m: Int, n: Int): String {
 }
 
 fun oneChangeForMax(num: Int): Int {
+    return trySwap(num, 1)
+}
+
+private fun trySwap(num: Int, from: Int): Int {
     val numInString = num.toString()
-    val nthFromLeft = 1
     val digitsPair = numInString
-            .substring(nthFromLeft
-            ).mapIndexed { index, digit -> Digit(digit.toInt(), index + nthFromLeft) }
-    val queue: PriorityQueue<Digit> = PriorityQueue(numInString.length - nthFromLeft, Collections.reverseOrder());
+            .substring(from
+            ).mapIndexed { index, digit -> Digit(digit.toInt(), index + from) }
+    if (from == numInString.length) {
+        return num
+    }
+    val queue: PriorityQueue<Digit> = PriorityQueue(numInString.length - from, Collections.reverseOrder());
     digitsPair.forEach { queue.offer(it) }
     val largestPossible = queue.poll()
-    if (largestPossible.value > numInString[nthFromLeft - 1].toInt()) {
-        return numInString.swap(nthFromLeft - 1, largestPossible.index).toInt()
+    if (largestPossible.value > numInString[from - 1].toInt()) {
+        return numInString.swap(from - 1, largestPossible.index).toInt()
     }
-    return 0
+    return trySwap(num, from + 1)
 }
