@@ -4,6 +4,14 @@ import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test
 
+/*
+TODO:
+1. Swap for non first
+2. num single digit
+3. num two digit
+4. exception and check
+ */
+
 class OneChangeMaxNumberKtTest {
 
     @Test
