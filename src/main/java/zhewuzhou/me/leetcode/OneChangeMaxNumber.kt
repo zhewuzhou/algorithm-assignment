@@ -39,8 +39,8 @@ fun oneChangeForMax(num: Int): Int {
     val queue: PriorityQueue<Digit> = PriorityQueue(numInString.length - nthFromLeft, Collections.reverseOrder());
     digitsPair.forEach { queue.offer(it) }
     val largestPossible = queue.poll()
-    if (largestPossible.value > numInString[0].toInt()) {
-        return numInString.swap(0, largestPossible.index).toInt()
+    if (largestPossible.value > numInString[nthFromLeft - 1].toInt()) {
+        return numInString.swap(nthFromLeft - 1, largestPossible.index).toInt()
     }
     return 0
 }
