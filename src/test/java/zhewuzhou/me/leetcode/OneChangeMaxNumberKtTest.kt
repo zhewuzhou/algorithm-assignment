@@ -13,6 +13,11 @@ class OneChangeMaxNumberKtTest {
     }
 
     @Test
+    fun should_return_the_same_value_when_same() {
+        assertThat(oneChangeForMax(133), `is`(331))
+    }
+
+    @Test
     fun should_swap_string(){
         val result = "123".swap(0, 2)
         assertThat(result, `is`("321"))

@@ -2,6 +2,21 @@ package zhewuzhou.me.leetcode
 
 import java.util.*
 
+
+class Digit(val value: Int, val index: Int) :
+        Comparable<Digit> {
+
+    override fun compareTo(other: Digit): Int {
+        return COMPARATOR.compare(this, other)
+    }
+
+    companion object {
+        private val COMPARATOR =
+                Comparator.comparingInt<Digit> { it.value }
+                        .thenComparingInt { it.index }
+    }
+}
+
 fun String.swap(m: Int, n: Int): String {
     assert(m in 0 until length)
     assert(n in 0 until length)
@@ -17,14 +32,15 @@ fun String.swap(m: Int, n: Int): String {
 
 fun oneChangeForMax(num: Int): Int {
     val numInString = num.toString()
+    val nthFromLeft = 1
     val digitsPair = numInString
-            .substring(1
-            ).mapIndexed { index, digit -> Pair(digit, numInString.length - index) }
-    val queue: PriorityQueue<Pair<Char, Int>> = PriorityQueue(numInString.length - 1, Collections.reverseOrder());
+            .substring(nthFromLeft
+            ).mapIndexed { index, digit -> Digit(digit.toInt(), index + nthFromLeft) }
+    val queue: PriorityQueue<Digit> = PriorityQueue(numInString.length - nthFromLeft, Collections.reverseOrder());
     digitsPair.forEach { queue.offer(it) }
     val largestPossible = queue.poll()
-    if (largestPossible.first > numInString[0]) {
-        return numInString.swap(0, largestPossible.second).toInt()
+    if (largestPossible.value > numInString[0].toInt()) {
+        return numInString.swap(0, largestPossible.index).toInt()
     }
     return 0
 }
