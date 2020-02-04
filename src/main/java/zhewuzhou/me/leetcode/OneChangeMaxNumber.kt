@@ -32,9 +32,9 @@ fun String.swap(m: Int, n: Int): String {
 
 fun oneChangeForMax(num: Int): Int {
     val numInString = num.toString()
-    val digitsPair = numInString
+    val digits = numInString
             .mapIndexed { index, digit -> Digit(digit.toInt(), index) }
-    return trySwap(numInString, 1, num, digitsPair)
+    return trySwap(numInString, 1, num, digits)
 }
 
 private fun trySwap(numInString: String, from: Int, original: Int, digits: List<Digit>): Int {
