@@ -12,8 +12,8 @@ class Digit(val value: Int, val index: Int) :
 
     companion object {
         private val COMPARATOR =
-                Comparator.comparingInt<Digit> { it.value }
-                        .thenComparingInt { it.index }
+                Comparator.comparingInt<Digit> { -it.value }
+                        .thenComparingInt { -it.index }
     }
 }
 
@@ -31,21 +31,19 @@ fun String.swap(m: Int, n: Int): String {
 }
 
 fun oneChangeForMax(num: Int): Int {
-    return trySwap(num.toString(), 1, num)
+    val numInString = num.toString()
+    val digitsPair = numInString
+            .mapIndexed { index, digit -> Digit(digit.toInt(), index) }
+    return trySwap(numInString, 1, num, digitsPair)
 }
 
-private fun trySwap(numInString: String, from: Int, original: Int): Int {
-    val digitsPair = numInString
-            .substring(from
-            ).mapIndexed { index, digit -> Digit(digit.toInt(), index + from) }
+private fun trySwap(numInString: String, from: Int, original: Int, digits: List<Digit>): Int {
     if (from == numInString.length) {
         return original
     }
-    val queue: PriorityQueue<Digit> = PriorityQueue(numInString.length - from, Collections.reverseOrder());
-    digitsPair.forEach { queue.offer(it) }
-    val max = queue.poll()
+    val max = PriorityQueue(digits.filter { it.index >= from }).poll()
     if (max.value > numInString[from - 1].toInt()) {
         return numInString.swap(from - 1, max.index).toInt()
     }
-    return trySwap(original.toString(), from + 1, original)
+    return trySwap(original.toString(), from + 1, original, digits)
 }
