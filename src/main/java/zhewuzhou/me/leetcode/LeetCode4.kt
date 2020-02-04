@@ -20,15 +20,11 @@ fun findMedianSortedArrays(nums1: IntArray, nums2: IntArray): Double {
 
 fun findKthElement(l1: List<Int>, l2: List<Int>, k: Int): Int {
     check(k <= l1.size + l2.size)
-    if (l2.first() > l1.last()) {
-        return (l1 + l2)[k - 1]
-    }
-    if (l1.first() > l2.last()) {
-        return (l2 + l1)[k - 1]
-    }
-    var i = 0;
-    var j = 0;
-    var iMin = 0;
+    if (isOrdered(l2, l1)) return (l1 + l2)[k - 1]
+    if (isOrdered(l1, l2)) return (l2 + l1)[k - 1]
+    var i = 0
+    var j = 0
+    var iMin = 0
     var iMax = min(l1.size, k - 1)
     while (iMin <= iMax) {
         i = (iMin + iMax) / 2
@@ -42,5 +38,12 @@ fun findKthElement(l1: List<Int>, l2: List<Int>, k: Int): Int {
         }
     }
     return -1
+}
+
+private fun isOrdered(l2: List<Int>, l1: List<Int>): Boolean {
+    if (l2.first() >= l1.last()) {
+        return true
+    }
+    return false
 }
 
