@@ -8,7 +8,7 @@ class LeetCode5KtTest {
 
     @Test
     fun `should find palindromic  substring for "banana"`() {
-        assertThat(longestPalindrome("banana"), `is`("anana"))
+        assertThat(longestPalindromeBruteForce("banana"), `is`("anana"))
     }
 
     @Test

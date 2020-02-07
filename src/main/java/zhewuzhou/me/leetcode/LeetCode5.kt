@@ -1,6 +1,6 @@
 package zhewuzhou.me.leetcode
 
-fun longestPalindrome(s: String): String =
+fun longestPalindromeBruteForce(s: String): String =
         (s.indices).flatMap { s.allSubStrings(it) }.filter { it.isPalindrome() }.maxBy { it.length } ?: ""
 
 
