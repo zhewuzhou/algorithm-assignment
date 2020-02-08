@@ -17,6 +17,6 @@ fun convert(s: String, numRows: Int): String {
 }
 
 fun Int.zigzagIndex(): List<Int> {
-    check(this > 2)
+    check(this > 1)
     return (0 until this).toList() + (this - 2 downTo 1).toList()
 }

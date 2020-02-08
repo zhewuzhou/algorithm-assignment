@@ -19,6 +19,12 @@ class LeetCode6KtTest {
     }
 
     @Test
+    fun `Should convert the "ABCDEFGH" follow zigzag rules 2`() {
+        val result = convert("ABCDEFGH", 2)
+        assertThat(result, `is`("ACEGBDFH"))
+    }
+
+    @Test
     fun `Should get correct index for 3 zigzag`() {
         val index = 3.zigzagIndex()
         assertThat(index, `is`(listOf(0, 1, 2, 1)))
