@@ -13,6 +13,12 @@ class LeetCode6KtTest {
     }
 
     @Test
+    fun `Should convert the "GEEKSFORGEEKS" follow zigzag rules 3`() {
+        val result = convert("GEEKSFORGEEKS", 3)
+        assertThat(result, `is`("GSGSEKFREKEOE"))
+    }
+
+    @Test
     fun `Should convert the "PAYPALISHIRING" follow zigzag rules 4`() {
         val result = convert("PAYPALISHIRING", 4)
         assertThat(result, `is`("PINALSIGYAHRPI"))
