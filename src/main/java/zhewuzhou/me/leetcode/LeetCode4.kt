@@ -46,14 +46,3 @@ private fun isOrdered(l2: List<Int>, l1: List<Int>): Boolean {
     }
     return false
 }
-
-
-    w xrrrrrra
-
-
-
-
-
-
-
-        8 zwtrwu555555zuuxxxxxxxxxxxxxxx
