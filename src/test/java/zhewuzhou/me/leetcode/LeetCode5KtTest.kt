@@ -17,32 +17,48 @@ class LeetCode5KtTest {
     }
 
     @Test
+    fun `cbb should be palindromic`() {
+        assertThat("cbb".isPalindrome(), `is`(false))
+    }
+
+    @Test
+    fun `"cbbd" should be palindromic`() {
+        assertThat(longestPalindromeBruteForce("cbbd"), `is`("bb"))
+    }
+
+    @Test
     fun `geeksskeeg should be palindromic`() {
         assertThat("geeksskeeg".isPalindrome(), `is`(true))
     }
 
     @Test
     fun `empty should not be palindromic`() {
-        assertThat("".isPalindrome(), `is`(false))
+        assertThat("".isPalindrome(), `is`(true))
     }
 
     @Test
     fun `single char should not be palindromic`() {
-        assertThat("a".isPalindrome(), `is`(false))
+        assertThat("a".isPalindrome(), `is`(true))
     }
 
     @Test
     fun `should calculate all substrings for banana 0`() {
-        assertThat("banana".allSubStrings(0), `is`(listOf("ba", "ban", "bana", "banan", "banana")))
+        assertThat("banana".longestByIndex(0), `is`("b"))
     }
 
     @Test
     fun `should calculate all substrings for empty 0`() {
-        assertThat("".allSubStrings(0), `is`(listOf()))
+        assertThat("".longestByIndex(0), `is`(""))
     }
 
     @Test
     fun `should calculate all substrings for single char 0`() {
-        assertThat("a".allSubStrings(0), `is`(listOf()))
+        assertThat("a".longestByIndex(0), `is`("a"))
+    }
+
+    @Test
+    fun `should calculate for very long string`() {
+        val longString = "civilwartestingwhetherthatnaptionoranynartionsoconceivedandsodedicatedcanlongendureWeareqmetonagreatbattlefiemldoftzhatwarWehavecometodedicpateaportionofthatfieldasafinalrestingplaceforthosewhoheregavetheirlivesthatthatnationmightliveItisaltogetherfangandproperthatweshoulddothisButinalargersensewecannotdedicatewecannotconsecratewecannothallowthisgroundThebravelmenlivinganddeadwhostruggledherehaveconsecrateditfaraboveourpoorponwertoaddordetractTgheworldadswfilllittlenotlenorlongrememberwhatwesayherebutitcanneverforgetwhattheydidhereItisforusthelivingrathertobededicatedheretotheulnfinishedworkwhichtheywhofoughtherehavethusfarsonoblyadvancedItisratherforustobeherededicatedtothegreattdafskremainingbeforeusthatfromthesehonoreddeadwetakeincreaseddevotiontothatcauseforwhichtheygavethelastpfullmeasureofdevotionthatweherehighlyresolvethatthesedeadshallnothavediedinvainthatthisnationunsderGodshallhaveanewbirthoffreedomandthatgovernmentofthepeoplebythepeopleforthepeopleshallnotperishfromtheearth"
+        assertThat(longestPalindromeBruteForce(longString), `is`("ranynar"))
     }
 }
