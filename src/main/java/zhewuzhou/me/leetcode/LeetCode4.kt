@@ -1,5 +1,6 @@
 package zhewuzhou.me.leetcode
 
+import java.lang.Integer.max
 import java.lang.Integer.min
 
 /*
@@ -14,30 +15,55 @@ fun findMedianSortedArrays(nums1: IntArray, nums2: IntArray): Double {
     val totalSize = nums1.size + nums2.size
     return if (totalSize % 2 == 0)
         (findKthElement(nums1.toList(), nums2.toList(), totalSize / 2)
-                + findKthElement(nums1.toList(), nums2.toList(), totalSize / 2 + 1)) / 2.0
+            + findKthElement(nums1.toList(), nums2.toList(), totalSize / 2 + 1)) / 2.0
     else findKthElement(nums1.toList(), nums2.toList(), totalSize / 2 + 1).toDouble()
 }
 
-fun findKthElement(l1: List<Int>, l2: List<Int>, k: Int): Int {
-    check(k <= l1.size + l2.size)
-    if (isOrdered(l2, l1)) return (l1 + l2)[k - 1]
-    if (isOrdered(l1, l2)) return (l2 + l1)[k - 1]
-    var i = 0
-    var j = 0
-    var iMin = 0
-    var iMax = min(l1.size, k - 1)
-    while (iMin <= iMax) {
-        i = (iMin + iMax) / 2
-        j = k - 1 - i
-        if (j > 0 && l2[j - 1] > l1[i]) {
-            iMin = i + 1
-        } else if (i > 0 && l1[i - 1] > l2[j]) {
-            iMax = i - 1
+fun findKthElement(lhs: List<Int>, rhs: List<Int>, k: Int): Int {
+    if (k == lhs.size + rhs.size) {
+        return max(lhs.last(), rhs.last())
+    }
+    var start = 0
+    var end = min(lhs.size - 1, k - 1)
+    while (start <= end) {
+        val lPartition = (end + start) / 2
+        val rPartition = k - lPartition - 1
+        if (rPartition <= rhs.size - 1) {
+            val lhsValidSplit = when (rPartition > 0) {
+                (true) -> lPartition == lhs.size - 1 || lhs[lPartition] >= rhs[rPartition - 1]
+                (false) -> true
+            }
+            val rhsValidSplit = when (lPartition > 0) {
+                (true) -> lhs[lPartition - 1] <= rhs[rPartition]
+                (false) -> true
+            }
+            if (lhsValidSplit && rhsValidSplit) {
+                return kthByPartition(lhs, lPartition, rhs, rPartition)
+            }
+            if (lPartition > 0 && lhs[lPartition - 1] > rhs[rPartition]) {
+                end = lPartition - 1
+            } else {
+                start = lPartition + 1
+            }
         } else {
-            return min(l1[i], l2[j])
+            start = lPartition + 1
         }
     }
-    return -1
+    return 0
+}
+
+private fun kthByPartition(lhs: List<Int>, lPartition: Int, rhs: List<Int>, rPartition: Int): Int {
+    if (lPartition == lhs.size - 1 && rPartition >= 1) {
+        if (lhs[lPartition] <= rhs[rPartition - 1]) {
+            return rhs[rPartition - 1]
+        }
+    }
+    if (rPartition == rhs.size - 1 && lPartition >= 1) {
+        if (rhs[rPartition] <= lhs[lPartition - 1]) {
+            return lhs[lPartition - 1]
+        }
+    }
+    return min(lhs[lPartition], rhs[rPartition])
 }
 
 private fun isOrdered(l2: List<Int>, l1: List<Int>): Boolean {
