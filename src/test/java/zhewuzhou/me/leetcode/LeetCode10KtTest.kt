@@ -24,4 +24,18 @@ class LeetCode10KtTest {
         assertThat(isMatch("aab", "c*a*b"), `is`(true))
         assertThat(isMatch("mississippi", "mis*is*p*."), `is`(false))
     }
+
+    @Test
+    fun `Should match empty src`() {
+        assertThat(isMatch("", "a*"), `is`(true))
+        assertThat(isMatch("", "a*b*c*"), `is`(true))
+        assertThat(isMatch("", ""), `is`(true))
+        assertThat(isMatch("", "a"), `is`(false))
+        assertThat(isMatch("", "."), `is`(false))
+    }
+
+    @Test
+    fun `should match more edge cases`() {
+        assertThat(isMatch("ab", ".*c"), `is`(false))
+    }
 }

@@ -1,30 +1,27 @@
 package zhewuzhou.me.leetcode
 
-fun isMatch(s: String, p: String): Boolean {
-    val cache = mutableMapOf<Pair<Int, Int>, Boolean>()
-    fun matchPosition(src: String, sp: Int, pattern: String, pp: Int): Boolean {
-        if (sp >= src.length - 1) {        //src run out
-            return pp >= pattern.length - 1
-        }
-        if (pp >= pattern.length - 1) { //pattern run out
-            return false
-        }
-        return if (pattern[pp + 1] == '*') {
-            when (pattern[pp] == '.' || src[sp] == pattern[pp]) {
-                (true) -> (matchPosition(src, sp, pattern, pp + 2)
-                    || matchPosition(src, sp + 1, pattern, pp)
-                    || matchPosition(src, sp + 1, pattern, pp + 2))
-                (false) -> matchPosition(src, sp, pattern, pp + 2)
-            }
+fun isMatch(s: String, p: String): Boolean =
+    match(s, 0, p, 0)
 
-        } else {
-            when (pattern[pp] == '.' || pattern[pp] == src[sp]) {
-                (true) -> matchPosition(src, sp + 1, pattern, pp + 1)
-                (false) -> false
-            }
-        }
+/*
+if sp==src.length && pp==pattern.length then true
+ */
+private fun match(s: String, si: Int, p: String, pi: Int): Boolean {
+    if (pi == p.length) return si == s.length
+    return if (pi < p.length - 1 && p[pi + 1] == '*') {
+        (match(s, si, p, pi + 2) ||
+            (si < s.length
+                && charMatch(s[si], p[pi])
+                && match(s, si + 1, p, pi)))
+    } else {
+        (si < s.length
+            && charMatch(s[si], p[pi])
+            && match(s, si + 1, p, pi + 1))
     }
-    return matchPosition(s, 0, p, 0)
 }
 
-
+private fun charMatch(s: Char, p: Char): Boolean =
+    when (p == '.') {
+        (true) -> true
+        (false) -> s == p
+    }
