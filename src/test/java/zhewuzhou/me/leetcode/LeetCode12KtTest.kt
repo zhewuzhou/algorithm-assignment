@@ -18,4 +18,15 @@ class LeetCode12KtTest {
         assertThat(intToRoman(58), `is`("LVIII"))
         assertThat(intToRoman(1994), `is`("MCMXCIV"))
     }
+
+    @Test
+    fun `Should convert large roman number to int`() {
+        assertThat(romanToInt("LVIII"), `is`(58))
+        assertThat(romanToInt("MCMXCIV"), `is`(1994))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `Should throw exception for edge cases`() {
+        romanToInt("LVIIIM")
+    }
 }
