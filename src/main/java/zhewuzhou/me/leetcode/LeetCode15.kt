@@ -33,11 +33,15 @@ fun threeSumSlow(nums: IntArray): List<List<Int>> {
 }
 
 fun threeSum(nums: IntArray): List<List<Int>> {
-    val result = mutableListOf<SumEle>()
     nums.sort()
-    var ni = 0
-    while (ni < nums.size && nums[ni] <= 0) {
-        val target = -nums[ni]
+    return threeSum(nums, 0, 0)
+}
+
+fun threeSum(nums: IntArray, pos: Int, reminder: Int): MutableList<MutableList<Int>> {
+    val result = mutableListOf<MutableList<Int>>()
+    var ni = pos
+    while (ni < nums.size - 2) {
+        val target = reminder - nums[ni]
         var start = ni + 1
         var end = nums.size - 1
         while (start < end) {
@@ -45,7 +49,7 @@ fun threeSum(nums: IntArray): List<List<Int>> {
                 1 -> end -= 1
                 -1 -> start += 1
                 0 -> {
-                    result.add(SumEle(nums[ni], nums[start], nums[end]))
+                    result.add(mutableListOf(nums[ni], nums[start], nums[end]))
                     while (start < end && nums[start] == nums[start + 1]) {
                         start += 1
                     }
@@ -62,5 +66,5 @@ fun threeSum(nums: IntArray): List<List<Int>> {
         }
         ni += 1
     }
-    return result.map { listOf(it.a, it.b, it.c) }
+    return result
 }
