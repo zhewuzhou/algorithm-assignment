@@ -15,10 +15,9 @@ fun generateParenthesis(n: Int): List<String> {
     }
 }
 
-fun addParenthesis(s: String): List<String> {
-    val result = mutableSetOf<String>()
-    val possible = (s.indices).map { s.substring(0..it) + "()" + s.substring(it + 1 until s.length) }
-    result.addAll(possible)
-    result.add("()$s")
-    return result.toList()
-}
+inline fun addParenthesis(s: String): List<String> =
+    (-1 until s.length).map {
+        if (it == -1) "()$s"
+        else s.substring(0..it) + "()" + s.substring(it + 1 until s.length)
+    }.distinct()
+
