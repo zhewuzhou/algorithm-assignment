@@ -3,6 +3,9 @@ package zhewuzhou.me.leetcode20
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
+import zhewuzhou.me.leetcode40.binarySearch
+import zhewuzhou.me.leetcode40.findPivot
+import zhewuzhou.me.leetcode40.search
 
 class LeetCode33KtTest {
 
