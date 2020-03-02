@@ -10,8 +10,22 @@ fun searchRange(nums: IntArray, target: Int): IntArray {
     }
 }
 
+fun searchInsert(nums: IntArray, target: Int): Int {
+    var low = 0
+    var high = nums.size - 1
+    while (low <= high) {
+        val mid = (low + high) / 2
+        when (nums[mid].compareTo(target)) {
+            0 -> return mid
+            1 -> high = mid - 1
+            -1 -> low = mid + 1
+        }
+    }
+    return low
+}
+
 fun searchStart(nums: IntArray, target: Int): Int {
-    return search(nums, target,
+    return searchConditions(nums, target,
         { mid ->
             (nums[mid] == target && mid == 0) ||
                 (nums[mid] == target && nums[mid - 1] < nums[mid])
@@ -21,7 +35,7 @@ fun searchStart(nums: IntArray, target: Int): Int {
 }
 
 fun searchEnd(nums: IntArray, target: Int): Int {
-    return search(nums, target,
+    return searchConditions(nums, target,
         { mid ->
             (nums[mid] == target && mid == nums.size - 1) ||
                 (nums[mid] == target && nums[mid + 1] > nums[mid])
@@ -30,10 +44,10 @@ fun searchEnd(nums: IntArray, target: Int): Int {
         { mid -> (nums[mid] == target && mid < nums.size - 1 && nums[mid + 1] == target) })
 }
 
-fun search(nums: IntArray, target: Int,
-           found: (mid: Int) -> Boolean,
-           reduceHighBound: (mid: Int) -> Boolean,
-           increaseLowBound: (mid: Int) -> Boolean): Int {
+fun searchConditions(nums: IntArray, target: Int,
+                     found: (mid: Int) -> Boolean,
+                     reduceHighBound: (mid: Int) -> Boolean,
+                     increaseLowBound: (mid: Int) -> Boolean): Int {
     val maxIndex = nums.size - 1
     var mid = (maxIndex + 1) / 2
     var lBound = 0
