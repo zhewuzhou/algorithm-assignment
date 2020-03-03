@@ -43,15 +43,14 @@ fun solve(board: Array<CharArray>): Boolean {
     for (i in board.indices) {
         for (j in board[0].indices) {
             if (board[i][j] == '.') {
-                var c = '1'
-                while (c <= '9') {
-                    //trial. Try 1 through 9
-                    if (isValid(board, i, j, c)) {
-                        board[i][j] = c //Put c for this cell
-                        if (solve(board)) return true //If it's the solution return true
-                        else board[i][j] = '.' //Otherwise go back
+                var possibleValue = '1'
+                while (possibleValue <= '9') {
+                    if (isValid(board, i, j, possibleValue)) {
+                        board[i][j] = possibleValue
+                        if (solve(board)) return true
+                        else board[i][j] = '.'
                     }
-                    c++
+                    possibleValue++
                 }
                 return false
             }
