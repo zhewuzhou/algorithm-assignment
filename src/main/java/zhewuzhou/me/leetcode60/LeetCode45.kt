@@ -19,7 +19,7 @@ fun jumpDP(nums: IntArray): Int {
 }
 
 fun jump(nums: IntArray): Int {
-    return jumpRecursive(nums, 0)
+    return jumpDP(nums)
 }
 
 fun jumpRecursive(nums: IntArray, pos: Int): Int {

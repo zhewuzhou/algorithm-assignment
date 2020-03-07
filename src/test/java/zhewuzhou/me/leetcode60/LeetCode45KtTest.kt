@@ -18,7 +18,8 @@ class LeetCode45KtTest {
             arrayOf(
                 Test45Case(listOf(2, 3, 1, 1, 4), 2),
                 Test45Case(listOf(2, 3, 0, 1, 4), 2),
-                Test45Case(listOf(1, 2, 1, 1, 1), 3)
+                Test45Case(listOf(1, 2, 1, 1, 1), 3),
+                Test45Case(listOf(3, 2, 1, 0, 4), 6)
             )
         )
     }
