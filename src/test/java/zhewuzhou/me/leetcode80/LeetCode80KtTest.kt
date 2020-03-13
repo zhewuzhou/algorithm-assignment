@@ -1,9 +1,6 @@
 package zhewuzhou.me.leetcode80
 
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class LeetCode80KtTest {
@@ -17,9 +14,14 @@ class LeetCode80KtTest {
         )
     }
 
-    @ParameterizedTest
-    @MethodSource("cases")
-    fun `Should remove duplications`(case: Pair<List<Int>, Int>) {
-        assertThat(removeDuplicates(case.first.toIntArray()), `is`(case.second))
+//    @ParameterizedTest
+//    @MethodSource("cases")
+//    fun `Should remove duplications`(case: Pair<List<Int>, Int>) {
+//        assertThat(removeDuplicates(case.first.toIntArray()), `is`(case.second))
+//    }
+
+    @Test
+    fun `Should sort colors`() {
+        sortColors(arrayOf(1, 2, 0).toIntArray())
     }
 }
