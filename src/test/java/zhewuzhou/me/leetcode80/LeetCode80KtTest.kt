@@ -14,11 +14,11 @@ class LeetCode80KtTest {
         )
     }
 
-//    @ParameterizedTest
-//    @MethodSource("cases")
-//    fun `Should remove duplications`(case: Pair<List<Int>, Int>) {
-//        assertThat(removeDuplicates(case.first.toIntArray()), `is`(case.second))
-//    }
+    @ParameterizedTest
+    @MethodSource("cases")
+    fun `Should remove duplications`(case: Pair<List<Int>, Int>) {
+        assertThat(removeDuplicates(case.first.toIntArray()), `is`(case.second))
+    }
 
     @Test
     fun `Should sort colors`() {
