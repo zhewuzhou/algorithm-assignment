@@ -4,6 +4,33 @@ class ListNode(var `val`: Int) {
     var next: ListNode? = null
 }
 
+fun reverseBetween(head: ListNode?, m: Int, n: Int): ListNode? {
+    val dummy = ListNode(0)
+    dummy.next = head
+    //first part
+    var curBeforeReverse: ListNode? = dummy
+    var preBeforeReverse: ListNode? = null
+    for (i in 0 until m) {
+        preBeforeReverse = curBeforeReverse
+        curBeforeReverse = curBeforeReverse?.next
+    }
+
+    //reverse
+    var cur = curBeforeReverse
+    var pre = preBeforeReverse
+    for (i in m..n) {
+        val next: ListNode? = cur?.next
+        cur?.next = pre
+        pre = cur
+        cur = next
+    }
+
+    //connect
+    preBeforeReverse?.next = pre
+    curBeforeReverse?.next = cur
+    return dummy.next
+}
+
 fun deleteDuplicates(head: ListNode?): ListNode? {
     var cur = head
     if (cur?.next == null) return cur
