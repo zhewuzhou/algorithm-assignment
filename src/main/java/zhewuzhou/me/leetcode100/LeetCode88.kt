@@ -7,6 +7,7 @@ fun merge(nums1: IntArray, m: Int, nums2: IntArray, n: Int): Unit {
     nums1.sort(0, m + n - 1)
 }
 
+//Micro view && Overview
 fun grayCode(n: Int): List<Int> {
     val res = mutableListOf<Int>(0)
     for (x in 0 until n) {
