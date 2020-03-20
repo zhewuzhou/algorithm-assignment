@@ -8,6 +8,25 @@ class TreeNode(var `val`: Int) {
     var right: TreeNode? = null
 }
 
+fun isValidBST(root: TreeNode?): Boolean {
+    val list = mutableListOf<Int>()
+    val stack: Stack<TreeNode> = Stack<TreeNode>()
+    var cur = root
+    while (cur != null || !stack.empty()) {
+        while (cur != null) {
+            stack.add(cur)
+            cur = cur.left
+        }
+        cur = stack.pop()
+        if (list.isNotEmpty() && cur.`val` < list.last()) {
+            return false
+        }
+        list.add(cur.`val`)
+        cur = cur.right
+    }
+    return true
+}
+
 fun inorderTraversal(root: TreeNode?): List<Int> {
     val list = mutableListOf<Int>()
     val stack: Stack<TreeNode> = Stack<TreeNode>()
