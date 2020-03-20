@@ -54,6 +54,15 @@ fun isValidBST(root: TreeNode?): Boolean {
     return true
 }
 
+fun isSameTree(p: TreeNode?, q: TreeNode?): Boolean {
+    if (p == null && q == null) return true
+    if (p == null || q == null) return false
+    if (p.`val` == q.`val`) {
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right)
+    }
+    return false
+}
+
 fun inorderTraversal(root: TreeNode?): List<Int> {
     val list = mutableListOf<Int>()
     val stack: Stack<TreeNode> = Stack<TreeNode>()
