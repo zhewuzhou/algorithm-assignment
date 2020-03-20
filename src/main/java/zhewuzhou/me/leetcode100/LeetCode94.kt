@@ -8,6 +8,33 @@ class TreeNode(var `val`: Int) {
     var right: TreeNode? = null
 }
 
+fun recoverTree(root: TreeNode?): Unit {
+    var first: TreeNode? = null
+    var second: TreeNode? = null
+    val stack: Stack<TreeNode> = Stack<TreeNode>()
+    var cur = root
+    var pre: TreeNode? = null
+    while (cur != null || !stack.empty()) {
+        while (cur != null) {
+            stack.add(cur)
+            cur = cur.left
+        }
+        cur = stack.pop()
+        if (pre != null && pre.`val` >= cur.`val` && first == null) {
+            first = pre
+        }
+
+        if (pre != null && pre.`val` >= cur.`val` && first != null) {
+            second = cur
+        }
+        pre = cur
+        cur = cur.right
+    }
+    val temp: Int = first!!.`val`
+    first.`val` = second!!.`val`
+    second.`val` = temp
+}
+
 fun isValidBST(root: TreeNode?): Boolean {
     val list = mutableListOf<Int>()
     val stack: Stack<TreeNode> = Stack<TreeNode>()

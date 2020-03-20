@@ -2,6 +2,7 @@ package zhewuzhou.me.leetcode100
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
@@ -41,5 +42,15 @@ internal class LeetCode94KtTest {
     @MethodSource("cases")
     fun `Should validte the tree`(case: Pair<TreeNode, Boolean>) {
         assertThat(isValidBST(case.first), `is`(case.second))
+    }
+
+    @Test
+    fun `Should recover tree`() {
+        val root = TreeNode(2)
+        root.left = TreeNode(4)
+        val r = TreeNode(1)
+        r.left = TreeNode(3)
+        root.right = r
+        recoverTree(root)
     }
 }
