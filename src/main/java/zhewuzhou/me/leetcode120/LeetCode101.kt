@@ -68,6 +68,8 @@ private fun travel(root: TreeNode?, isZigZag: Boolean): List<List<Int>> {
         if (level.isNotEmpty()) {
             if (isZigZag && zigzag) {
                 res.add(level.reversed().map { it.`val` })
+            } else {
+                res.add(level.map { it.`val` })
             }
             queue.addAll(level)
         }
