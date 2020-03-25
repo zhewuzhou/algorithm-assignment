@@ -19,11 +19,18 @@ private fun getDepth(root: TreeNode?): Int {
 }
 
 fun minDepth(root: TreeNode?): Int {
-    if(root == null) return 0
+    if (root == null) return 0
     return when {
         (root.left != null && root.right != null) -> Math.min(minDepth(root.left), minDepth(root.right)) + 1
         (root.left != null && root.right == null) -> minDepth(root.left) + 1
         (root.left == null && root.right != null) -> minDepth(root.right) + 1
         else -> 1
     }
+}
+
+fun hasPathSum(root: TreeNode?, sum: Int): Boolean {
+    if (root == null || root.`val` > sum) return false
+    if (root.`val` == sum && root.left == null && root.right == null) return true
+    return hasPathSum(root.left, sum - root.`val`)
+        || hasPathSum(root.right, sum - root.`val`)
 }
