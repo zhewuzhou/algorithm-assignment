@@ -1,6 +1,6 @@
 package zhewuzhou.me.leetcode120
 
-fun numDistinct(s: String, t: String): Int {
+fun numDistinctR(s: String, t: String): Int {
     if (s.isEmpty() && t.isEmpty()) return 1
     if (t.length > s.length || (s.isEmpty() && t.isNotEmpty())) return 0
     val src = s.toCharArray()
@@ -8,6 +8,27 @@ fun numDistinct(s: String, t: String): Int {
     val res = mutableListOf<List<Int>>()
     doDistinct(res, src, t, 0, mutableListOf())
     return res.size
+}
+
+fun numDistinct(s: String, t: String): Int {
+    if (s.isEmpty() && t.isEmpty()) return 1
+    if (t.length > s.length || (s.isEmpty() && t.isNotEmpty())) return 0
+    val matrix = Array(t.length + 1) {
+        IntArray(s.length + 1)
+    }
+    for (j in 0..s.length) {
+        matrix[0][j] = 1
+    }
+    for (i in t.indices) {
+        for (j in s.indices) {
+            if (t[i] == s[j]) {
+                matrix[i + 1][j + 1] = matrix[i][j] + matrix[i + 1][j];
+            } else {
+                matrix[i + 1][j + 1] = matrix[i + 1][j];
+            }
+        }
+    }
+    return matrix[t.length][s.length]
 }
 
 private fun doDistinct(res: MutableList<List<Int>>, src: List<Pair<Char, Int>>, t: String, si: Int, comb: MutableList<Int>) {
