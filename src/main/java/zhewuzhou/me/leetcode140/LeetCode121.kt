@@ -21,7 +21,7 @@ fun maxProfitQ(prices: IntArray): Int {
 fun maxProfitOneTransaction(prices: IntArray, start: Int, end: Int): Int {
     if (end < 2) return 0
     var maxProfit = 0
-    var minPrice = prices[0]
+    var minPrice = prices[start - 1]
     for (i in start until end) {
         if (prices[i] > prices[i - start]) {
             maxProfit = Math.max(maxProfit, prices[i] - minPrice)
@@ -33,5 +33,13 @@ fun maxProfitOneTransaction(prices: IntArray, start: Int, end: Int): Int {
 }
 
 fun maxProfit(prices: IntArray): Int {
-    return 0
+    var maxProfit = maxProfitOneTransaction(prices, 1, prices.size)
+    for (i in 2..(prices.lastIndex - 2)) {
+        val possible = maxProfitOneTransaction(prices, 1, i) +
+            maxProfitOneTransaction(prices, i + 1, prices.size)
+        if (possible > maxProfit) {
+            maxProfit = possible
+        }
+    }
+    return maxProfit
 }
