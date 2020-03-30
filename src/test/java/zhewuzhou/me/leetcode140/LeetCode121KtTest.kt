@@ -21,7 +21,9 @@ internal class LeetCode121KtTest {
             arrayOf(
                 Pair(listOf(3, 3, 5, 0, 0, 3, 1, 4), 6),
                 Pair(listOf(1, 2, 3, 4, 5), 4),
-                Pair(listOf(7, 6, 4, 3, 1), 0)
+                Pair(listOf(7, 6, 4, 3, 1), 0),
+                Pair(listOf(1, 2), 1),
+                Pair(listOf(2, 1, 2, 0, 1), 2)
             )
         )
     }
