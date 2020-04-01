@@ -17,6 +17,9 @@ fun maxPathSum(root: TreeNode?): Int {
 
 fun isPalindrome(s: String): Boolean {
     if (s.isEmpty()) return true
-    val ts = s.toCharArray().filter { (it in 'a'..'z') || (it in 'A'..'Z') }.map { it.toUpperCase() }.joinToString()
-    return ts == ts.reversed()
+    val ts = s.toCharArray()
+        .filter { (it in 'a'..'z') || (it in 'A'..'Z') || (it in '0'..'9') }
+        .map { it.toUpperCase() }
+        .joinToString("")
+    return ts.isEmpty() || ts == ts.reversed()
 }
