@@ -18,12 +18,15 @@ internal class LeetCode126KtTest {
         @JvmStatic
         fun cases() = Arrays.stream(
             arrayOf(
+//                Test126Case(
+//                    "hit", "cog", listOf("hot", "dot", "dog", "lot", "log", "cog"),
+//                    listOf(listOf("hit", "hot", "dot", "dog", "cog"), listOf("hit", "hot", "lot", "log", "cog"))
+//                ),
+//                Test126Case(
+//                    "hit", "cog", listOf("hot", "dot", "dog", "lot", "log"), listOf()
+//                ),
                 Test126Case(
-                    "hit", "cog", listOf("hot", "dot", "dog", "lot", "log", "cog"),
-                    listOf(listOf("hit", "hot", "dot", "dog", "cog"), listOf("hit", "hot", "lot", "log", "cog"))
-                ),
-                Test126Case(
-                    "hit", "cog", listOf("hot", "dot", "dog", "lot", "log"), listOf()
+                    "a", "c", listOf("a", "b", "c"), listOf(listOf("a", "c"))
                 )
             )
         )

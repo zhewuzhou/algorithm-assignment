@@ -1,12 +1,88 @@
 package zhewuzhou.me.leetcode140
 
-fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
+import java.util.*
+
+fun findLaddersCur(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
     if (beginWord.isEmpty() ||
         endWord.isEmpty() ||
         wordList.isEmpty() ||
         !wordList.contains(endWord)) return listOf()
     val res = mutableListOf<List<String>>()
     doFindLadders(res, mutableListOf(beginWord), wordList, endWord, listOf())
+    return res
+}
+
+fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
+    if (beginWord.isEmpty() ||
+        endWord.isEmpty() ||
+        wordList.isEmpty() ||
+        !wordList.contains(endWord)) return listOf()
+    val dict = wordList.toMutableSet()
+    val startQueue = LinkedList<String>()
+    val from = mutableMapOf(
+        beginWord to ""
+    )
+    startQueue.add(beginWord)
+    val endQueue = LinkedList<String>()
+    val to = mutableMapOf(
+        endWord to ""
+    )
+    endQueue.add(endWord)
+    while (startQueue.isNotEmpty() && endQueue.isNotEmpty()) {
+        val middle = from.keys.filter { to.containsKey(it) }
+        if (middle.isNotEmpty()) {
+            return middle.map { calculatePath(it, from, to) }
+        }
+        travelNextLevel(startQueue, dict, from)
+        travelNextLevel(endQueue, dict, to)
+    }
+    return listOf()
+}
+
+fun calculatePath(mid: String, from: Map<String, String>, to: Map<String, String>): List<String> {
+    val path = mutableListOf(mid)
+    var cur = from[mid]
+    while (cur != null && cur.isNotEmpty()) {
+        path.add(cur)
+        cur = from[cur]
+    }
+    path.reverse()
+    cur = to[mid]
+    while (cur != null && cur.isNotEmpty()) {
+        path.add(cur)
+        cur = to[cur]
+    }
+    return path
+}
+
+private fun travelNextLevel(curLevel: LinkedList<String>, dict: MutableSet<String>, path: MutableMap<String, String>) {
+    val nextLevel = mutableListOf<String>()
+    while (curLevel.isNotEmpty()) {
+        val cur = curLevel.pop()
+        val neighbours = nextLevel(cur, dict, path.keys)
+        neighbours.forEach {
+            path[it] = cur
+        }
+        nextLevel.addAll(neighbours)
+    }
+    curLevel.addAll(nextLevel)
+}
+
+fun nextLevel(cur: String, wordList: Set<String>, path: Set<String>): List<String> {
+    val res = mutableListOf<String>()
+    val p = cur.toCharArray()
+    for (i in cur.indices) {
+        for (c in 'a'..'z') {
+            if (p[i] == c) continue
+            val old = p[i]
+            p[i] = c
+            val ps = p.joinToString("")
+            if (wordList.contains(ps) && !path.contains(ps)) {
+                res.add(ps)
+            }
+            p[i] = old
+        }
+    }
     return res
 }
 
