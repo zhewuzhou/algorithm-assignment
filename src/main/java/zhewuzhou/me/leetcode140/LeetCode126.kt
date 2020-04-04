@@ -2,6 +2,7 @@ package zhewuzhou.me.leetcode140
 
 import java.util.*
 
+
 fun findLaddersCur(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
     if (beginWord.isEmpty() ||
         endWord.isEmpty() ||
@@ -13,11 +14,46 @@ fun findLaddersCur(beginWord: String, endWord: String, wordList: List<String>): 
 }
 
 fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
+    val wordSet: MutableSet<String> = HashSet(wordList)
+    if (!wordSet.contains(endWord)) return ArrayList()
+    var layer = mutableMapOf(
+        beginWord to mutableListOf(mutableListOf(beginWord))
+    )
+    while (layer.isNotEmpty()) {
+        val newLayer = mutableMapOf<String, MutableList<MutableList<String>>>()
+        for (word in layer.keys) {
+            if (word == endWord) {
+                return layer[word]!!
+            }
+            for (i in word.indices) {
+                for (c in 'a'..'z') {
+                    val newWord = word.substring(0, i) + c + word.substring(i + 1)
+                    if (!wordSet.contains(newWord)) continue
+                    if (!newLayer.containsKey(newWord)) {
+                        newLayer[newWord] = mutableListOf()
+                    }
+                    for (list in layer[word]!!) {
+                        val newList = mutableListOf(*list.toTypedArray())
+                        newList.add(newWord)
+                        newLayer[newWord]!!.add(newList)
+                    }
+                }
+            }
+        }
+        layer = newLayer
+        for (str in newLayer.keys) {
+            wordSet.remove(str)
+        }
+    }
+    return ArrayList()
+}
+
+fun findLaddersNotWorks(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
     if (beginWord.isEmpty() ||
         endWord.isEmpty() ||
         wordList.isEmpty() ||
         !wordList.contains(endWord)) return listOf()
-    val dict = wordList.toMutableSet()
+    val dict = wordList.toSet()
     val startQueue = LinkedList<String>()
     val from = mutableMapOf(
         beginWord to ""
@@ -28,24 +64,34 @@ fun findLadders(beginWord: String, endWord: String, wordList: List<String>): Lis
         endWord to ""
     )
     endQueue.add(endWord)
-    while (startQueue.isNotEmpty() && endQueue.isNotEmpty()) {
-        val middle = from.keys.filter { to.containsKey(it) }
-        if (middle.contains(beginWord)) {
-            return listOf(listOf(beginWord, endWord))
-        }
+    val res = mutableSetOf<List<String>>()
+    val pre = mutableListOf<String>()
+    var level = 0
+    var shortest = Int.MAX_VALUE
+    while (startQueue.isNotEmpty() || endQueue.isNotEmpty()) {
+        level += 1
+        val middle = getMiddle(from, to, pre)
         if (middle.isNotEmpty()) {
-            return getShortestPaths(middle, from, to)
+            shortest = getShortestPaths(middle, from, to, res)
+        }
+        if (level + 1 > shortest) {
+            break
         }
         travelNextLevel(startQueue, dict, from)
         travelNextLevel(endQueue, dict, to)
+        pre.addAll(middle)
     }
-    return listOf()
+    return res.toList()
+}
+
+private fun getMiddle(from: MutableMap<String, String>, to: MutableMap<String, String>, pre: List<String>): List<String> {
+    return from.keys.filter { to.containsKey(it) && !pre.contains(it) }
 }
 
 private fun getShortestPaths(middle: List<String>,
                              from: MutableMap<String, String>,
-                             to: MutableMap<String, String>): List<List<String>> {
-    val res = mutableSetOf<List<String>>()
+                             to: MutableMap<String, String>,
+                             res: MutableSet<List<String>>): Int {
     var shortest = Int.MAX_VALUE
     middle.forEach {
         val p = calculatePath(it, from, to)
@@ -53,7 +99,7 @@ private fun getShortestPaths(middle: List<String>,
         res.add(p)
     }
     res.removeIf { it.size > shortest }
-    return res.toList()
+    return shortest
 }
 
 fun calculatePath(mid: String, from: Map<String, String>, to: Map<String, String>): List<String> {
@@ -72,7 +118,7 @@ fun calculatePath(mid: String, from: Map<String, String>, to: Map<String, String
     return path
 }
 
-private fun travelNextLevel(curLevel: LinkedList<String>, dict: MutableSet<String>, path: MutableMap<String, String>) {
+private fun travelNextLevel(curLevel: LinkedList<String>, dict: Set<String>, path: MutableMap<String, String>) {
     val nextLevel = mutableListOf<String>()
     while (curLevel.isNotEmpty()) {
         val cur = curLevel.pop()
