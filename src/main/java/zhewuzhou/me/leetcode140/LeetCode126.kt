@@ -30,13 +30,30 @@ fun findLadders(beginWord: String, endWord: String, wordList: List<String>): Lis
     endQueue.add(endWord)
     while (startQueue.isNotEmpty() && endQueue.isNotEmpty()) {
         val middle = from.keys.filter { to.containsKey(it) }
+        if (middle.contains(beginWord)) {
+            return listOf(listOf(beginWord, endWord))
+        }
         if (middle.isNotEmpty()) {
-            return middle.map { calculatePath(it, from, to) }
+            return getShortestPaths(middle, from, to)
         }
         travelNextLevel(startQueue, dict, from)
         travelNextLevel(endQueue, dict, to)
     }
     return listOf()
+}
+
+private fun getShortestPaths(middle: List<String>,
+                             from: MutableMap<String, String>,
+                             to: MutableMap<String, String>): List<List<String>> {
+    val res = mutableSetOf<List<String>>()
+    var shortest = Int.MAX_VALUE
+    middle.forEach {
+        val p = calculatePath(it, from, to)
+        if (p.size < shortest) shortest = p.size
+        res.add(p)
+    }
+    res.removeIf { it.size > shortest }
+    return res.toList()
 }
 
 fun calculatePath(mid: String, from: Map<String, String>, to: Map<String, String>): List<String> {
