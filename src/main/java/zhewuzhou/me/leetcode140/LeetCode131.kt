@@ -37,7 +37,7 @@ fun partition(s: String): List<List<String>> {
     return res
 }
 
-fun minCut(s: String): Int {
+fun minCutCur(s: String): Int {
     val minCutCaches = mutableMapOf<String, Int>()
     val palindromeCaches = mutableMapOf<String, Boolean>()
     fun isPalindrome(src: String): Boolean {
@@ -52,10 +52,11 @@ fun minCut(s: String): Int {
         if (src.length == 1 || isPalindrome(src)) return 0
         var min = src.lastIndex
         for (i in 1..src.lastIndex) {
-            val left = minCutDP(src.substring(0, i))
-            val right = minCutDP(src.substring(i))
-            if (min > left + right + 1) {
-                min = left + right + 1
+            if (isPalindrome(src.substring(0, i))) {
+                val remaining = minCutDP(src.substring(i))
+                if (min > remaining + 1) {
+                    min = remaining + 1
+                }
             }
         }
         minCutCaches[src] = min
@@ -65,7 +66,28 @@ fun minCut(s: String): Int {
         0 -> 0
         1 -> 0
         else -> {
-            if (isPalindrome(s)) 1 else minCutDP(s)
+            if (isPalindrome(s)) 0 else minCutDP(s)
         }
     }
+}
+
+/*
+1. cut[i] is the minimum of cut[j - 1] + 1 (j <= i), if [j, i] is palindrome.
+2. If [j, i] is palindrome, [j + 1, i - 1] is palindrome, and c[j] == c[i].
+ */
+fun minCut(s: String): Int {
+    val l = s.length
+    val cut = IntArray(l)
+    val pal = Array(l) { BooleanArray(l) }
+    for (i in 0 until l) {
+        var min = i
+        for (j in 0..i) {
+            if (s[j] == s[i] && (j + 1 > i - 1 || pal[j + 1][i - 1])) {
+                pal[j][i] = true
+                min = if (j == 0) 0 else Math.min(min, cut[j - 1] + 1)
+            }
+        }
+        cut[i] = min
+    }
+    return cut[l - 1]
 }
