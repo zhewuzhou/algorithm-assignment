@@ -1,11 +1,5 @@
 package zhewuzhou.me.leetcode140
 
-fun wordBreakCur(s: String, wordDict: List<String>): Boolean {
-    if (s.isEmpty() || wordDict.isEmpty() || wordDict.all { it.isEmpty() }) return s.isEmpty()
-    val maxSize = wordDict.maxBy { it.length }!!.length
-    return doWordBreak(s, 0, wordDict, maxSize)
-}
-
 fun wordBreak(s: String, wordDict: List<String>): Boolean {
     if (wordDict.isEmpty() || wordDict.all { it.isEmpty() }) return s.isEmpty()
     if (s.isEmpty()) return false
@@ -27,25 +21,40 @@ fun wordBreak(s: String, wordDict: List<String>): Boolean {
     return res.last()
 }
 
-private fun doWordBreak(s: String, start: Int, wordDict: List<String>, max: Int): Boolean {
-    if (start == s.length) return true
-    val res = getNext(start, s, max, wordDict)
-    if (res.isEmpty()) return false
-    for (p in res) {
-        if (doWordBreak(s, start + p.length, wordDict, max)) {
-            return true
-        }
-    }
-    return false
+fun wordBreakII(s: String, wordDict: List<String>): List<String> {
+    if (wordDict.isEmpty() || wordDict.all { it.isEmpty() }) return listOf()
+    if (s.isEmpty() || !wordBreak(s, wordDict)) return listOf()
+    val maxSize = wordDict.maxBy { it.length }!!.length
+    val minSize = wordDict.minBy { it.length }!!.length
+    val res = mutableListOf<String>()
+    doWordBreak(res, mutableListOf(), s, 0, wordDict, Pair(maxSize, minSize))
+    return res
 }
 
-private fun getNext(start: Int, s: String, max: Int, wordDict: List<String>): List<String> {
+private fun doWordBreak(res: MutableList<String>,
+                        comb: MutableList<String>,
+                        src: String,
+                        start: Int,
+                        wordDict: List<String>,
+                        range: Pair<Int, Int>) {
+    if (start == src.length) {
+        res.add(comb.joinToString(" "))
+    } else {
+        for (s in getNext(start, src, wordDict, range)) {
+            comb.add(s)
+            doWordBreak(res, comb, src, start + s.length, wordDict, range)
+            comb.removeAt(comb.lastIndex)
+        }
+    }
+}
+
+private fun getNext(start: Int, s: String, wordDict: List<String>, range: Pair<Int, Int>): List<String> {
     val res = mutableListOf<String>()
-    for (i in (start + 1)..Math.min(s.length, start + max + 1)) {
+    for (i in (start + range.second)..Math.min(s.length, start + range.first)) {
         val sub = s.substring(start, i)
         if (wordDict.contains(sub)) {
             res.add(sub)
         }
     }
-    return res.reversed()
+    return res
 }
