@@ -44,3 +44,17 @@ fun maxProfit(prices: IntArray): Int {
     }
     return maxProfit
 }
+
+fun maxProfit(k: Int, prices: IntArray): Int {
+    fun dpRecur(k: Int, d: Int): Int {
+        if (d < 2) return 0
+        if (k == 1) return maxProfitOneTransaction(prices, 1, d)
+        val noTradeOnD = dpRecur(k, d - 1)
+        var tradeOnD = 0
+        for (m in 1 until d) {
+            tradeOnD = Math.max(dpRecur(k - 1, m - 1) + (prices[d - 1] - prices[m - 1]), tradeOnD)
+        }
+        return Math.max(noTradeOnD, tradeOnD)
+    }
+    return dpRecur(k, prices.size)
+}
