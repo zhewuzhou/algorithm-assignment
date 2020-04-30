@@ -1,7 +1,7 @@
 package zhewuzhou.me.leetcode140
 
 //egg not larger than log(l) or else lose meaning
-fun eggThrowDP(egg: Int, level: Int): Int {
+fun eggThrowDPRecur(egg: Int, level: Int): Int {
     val caches = mutableMapOf<Pair<Int, Int>, Int>()
     fun eggThrow(e: Int, l: Int): Int {
         if (caches.containsKey(Pair(e, l))) {
@@ -24,4 +24,35 @@ fun eggThrowDP(egg: Int, level: Int): Int {
         return res
     }
     return eggThrow(egg, level)
+}
+
+fun eggThrow(e: Int, l: Int): Int {
+    check(e > 0) {
+        "Egg can not be negative number."
+    }
+    check(l > 0) {
+        "Level can not be negative number."
+    }
+    val metrics = Array(e + 1) {
+        IntArray(l + 1) {
+            -1
+        }
+    }
+    for (i in 1..l) {
+        metrics[1][i] = i
+    }
+    for (i in 1..e) {
+        metrics[i][1] = 1
+    }
+    for (i in 2..e) {
+        for (j in 2..l) {
+            var minTries = j
+            for (k in 1 until j) {
+                val p = Math.max(metrics[i - 1][k], metrics[i][j - k]) + 1
+                minTries = Math.min(minTries, p)
+            }
+            metrics[i][j] = minTries
+        }
+    }
+    return metrics[e][l]
 }
