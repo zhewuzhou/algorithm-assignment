@@ -45,7 +45,7 @@ fun maxProfit(prices: IntArray): Int {
     return maxProfit
 }
 
-fun maxProfit(k: Int, prices: IntArray): Int {
+fun maxProfitRecur(k: Int, prices: IntArray): Int {
     fun dpRecur(k: Int, d: Int): Int {
         if (d < 2) return 0
         if (k == 1) return maxProfitOneTransaction(prices, 1, d)
