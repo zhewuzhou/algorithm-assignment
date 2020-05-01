@@ -59,26 +59,44 @@ fun maxProfitRecur(k: Int, prices: IntArray): Int {
     return dpRecur(k, prices.size)
 }
 
-fun maxProfit(k: Int, prices: IntArray): Int {
+fun maxProfitSlow(k: Int, prices: IntArray): Int {
     val days = prices.size
-    val metrics = Array(k + 1) {
-        IntArray(days + 1) {
+    val times = Math.min(k, days / 2)
+    if (times < 1 || prices.size < 2) return 0
+    val metrics = Array(times + 1) {
+        IntArray(days) {
             0
         }
     }
-    for (i in 2..days) {
-        metrics[1][i] = maxProfitOneTransaction(prices, 1, i)
-    }
-    for (i in 2..k) {
-        for (j in 2..days) {
-            val noTradeOnD = metrics[i][j - 1]
+    for (i in 1..times) {
+        for (j in 1 until days) {
             var tradeOnD = 0
-            for (m in 1 until j) {
-                val possible = metrics[i - 1][m - 1] + prices[j - 1] - prices[m - 1]
+            for (m in 0 until j) {
+                val possible = metrics[i - 1][m] + prices[j] - prices[m]
                 tradeOnD = Math.max(tradeOnD, possible)
             }
-            metrics[i][j] = Math.max(noTradeOnD, tradeOnD)
+            metrics[i][j] = Math.max(metrics[i][j - 1], tradeOnD)
         }
     }
-    return metrics[k][prices.size]
+    return metrics[times][prices.lastIndex]
+}
+
+fun maxProfit(k: Int, prices: IntArray): Int {
+    if (prices.size < 2) return 0
+    if (k > prices.size / 2) {
+        var res = 0
+        for (i in 1 until prices.size) {
+            res += Math.max(0, prices[i] - prices[i - 1])
+        }
+        return res
+    }
+    val dp = Array(k + 1) { IntArray(prices.size) { 0 } }
+    for (i in 1..k) {
+        var maxDiff = -prices[0]
+        for (j in 1 until prices.size) {
+            dp[i][j] = Math.max(dp[i][j - 1], maxDiff + prices[j])
+            maxDiff = Math.max(maxDiff, dp[i - 1][j - 1] - prices[j])
+        }
+    }
+    return dp[k][prices.size - 1]
 }
