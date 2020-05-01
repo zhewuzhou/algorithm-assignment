@@ -61,6 +61,6 @@ internal class LeetCode121KtTest {
     @MethodSource("caseskT")
     fun `Should calculate max profit given at most k transactions`(case: Triple<Int, List<Int>, Int>) {
         val prices = case.second.toIntArray()
-        assertThat(maxProfitRecur(case.first, prices), `is`(case.third))
+        assertThat(maxProfit(case.first, prices), `is`(case.third))
     }
 }

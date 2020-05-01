@@ -58,3 +58,27 @@ fun maxProfitRecur(k: Int, prices: IntArray): Int {
     }
     return dpRecur(k, prices.size)
 }
+
+fun maxProfit(k: Int, prices: IntArray): Int {
+    val days = prices.size
+    val metrics = Array(k + 1) {
+        IntArray(days + 1) {
+            0
+        }
+    }
+    for (i in 2..days) {
+        metrics[1][i] = maxProfitOneTransaction(prices, 1, i)
+    }
+    for (i in 2..k) {
+        for (j in 2..days) {
+            val noTradeOnD = metrics[i][j - 1]
+            var tradeOnD = 0
+            for (m in 1 until j) {
+                val possible = metrics[i - 1][m - 1] + prices[j - 1] - prices[m - 1]
+                tradeOnD = Math.max(tradeOnD, possible)
+            }
+            metrics[i][j] = Math.max(noTradeOnD, tradeOnD)
+        }
+    }
+    return metrics[k][prices.size]
+}
