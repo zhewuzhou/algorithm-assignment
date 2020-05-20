@@ -25,7 +25,7 @@ internal class CreateMaximumNumber321KtTest {
         @JvmStatic
         fun compareIntArray() = Arrays.stream(
             arrayOf(
-                Triple(intArrayOf(1, 2, 3), intArrayOf(1, 2, 3), true),
+                Triple(intArrayOf(1, 2, 3), intArrayOf(1, 2, 3), false),
                 Triple(intArrayOf(1, 3, 2), intArrayOf(1, 2, 3), true),
                 Triple(intArrayOf(1, 3, 2), intArrayOf(2, 1, 3), false)
             )

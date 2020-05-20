@@ -32,44 +32,17 @@ fun compareArray(lhs: IntArray, rhs: IntArray, lStart: Int, rStart: Int): Boolea
             -1 -> return false
         }
     }
-    return true
+    return false
 }
 
 fun mergeArray(lhs: IntArray, rhs: IntArray): IntArray {
     val result = mutableListOf<Int>()
     var li = 0
     var ri = 0
-    while (li <= lhs.lastIndex || ri <= rhs.lastIndex) {
-        when {
-            li == lhs.size -> {
-                result.addAll(rhs.copyOfRange(ri, rhs.size).toList())
-                ri = rhs.size
-            }
-            ri == rhs.size -> {
-                result.addAll(lhs.copyOfRange(li, lhs.size).toList())
-                li = lhs.size
-            }
-            else -> {
-                when (lhs[li].compareTo(rhs[ri])) {
-                    0 -> {
-                        if (compareArray(rhs, lhs, li, ri)) {
-                            result.add(lhs[li])
-                            li += 1
-                        } else {
-                            result.add(rhs[ri])
-                            ri += 1
-                        }
-                    }
-                    1 -> {
-                        result.add(lhs[li])
-                        li += 1
-                    }
-                    -1 -> {
-                        result.add(rhs[ri])
-                        ri += 1
-                    }
-                }
-            }
+    while (result.size < (lhs.size + rhs.size)) {
+        when (compareArray(lhs, rhs, li, ri)) {
+            true -> result.add(lhs[li++])
+            false -> result.add(rhs[ri++])
         }
     }
     return result.toIntArray()
