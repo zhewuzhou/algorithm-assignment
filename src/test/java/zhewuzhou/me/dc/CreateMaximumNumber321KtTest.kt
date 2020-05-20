@@ -62,6 +62,12 @@ internal class CreateMaximumNumber321KtTest {
         }
     }
 
+    @Test
+    fun `Should working on 5,1,0 and 5,2,1`() {
+        val result = maxNumber(intArrayOf(5, 1, 0), intArrayOf(5, 2, 1), 3)
+        assertThat(result.toList(), `is`(listOf(5, 5, 2)))
+    }
+
     @ParameterizedTest
     @MethodSource("pickNumbersCases")
     fun `Should pick k maximum elements from array`(case: Triple<IntArray, Int, IntArray>) {

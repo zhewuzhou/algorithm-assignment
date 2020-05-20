@@ -27,7 +27,7 @@ fun maxNumber(nums1: IntArray, nums2: IntArray, k: Int): IntArray {
 
 fun compareArray(lhs: IntArray, rhs: IntArray, lStart: Int, rStart: Int): Boolean {
     for (i in 0..(lhs.lastIndex - lStart)) {
-        when (lhs[lStart + i].compareTo(if (rStart + i > rhs.lastIndex) 0 else rhs[rStart + i])) {
+        when (lhs[lStart + i].compareTo(if (rStart + i > rhs.lastIndex) -1 else rhs[rStart + i])) {
             1 -> return true
             -1 -> return false
         }
