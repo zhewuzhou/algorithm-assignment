@@ -5,7 +5,6 @@ import java.util.*
 fun maxEnvelopes(envelopes: Array<IntArray>): Int {
     envelopes.sortWith(EnvelopComparator())
     val metrics = IntArray(envelopes.size) { 1 }
-    Arrays.binarySearch()
     var result = 1
     for (i in 1..metrics.lastIndex) {
         var maxForI = 1
