@@ -1,6 +1,6 @@
 package zhewuzhou.me.dp
 
-fun integerBreak(n: Int): Int {
+fun integerBreakSlow(n: Int): Int {
     if (n < 2 || n > 58) return 0
     val matrix = IntArray(n + 1) {
         1
@@ -11,4 +11,27 @@ fun integerBreak(n: Int): Int {
         }
     }
     return matrix[n]
+}
+
+fun integerBreak(n: Int): Int {
+    if (n <= 1 || n > 58) return 0
+    if (n == 2) return 1
+    if (n == 3) return 2
+    var result = 1
+    var threeExpo = n / 3
+    var twoExpo = 1
+    when (n % 3) {
+        1 -> {
+            threeExpo -= 1
+            twoExpo = 2
+        }
+        0 -> twoExpo = 0
+    }
+    repeat(threeExpo) {
+        result *= 3
+    }
+    repeat(twoExpo) {
+        result *= 2
+    }
+    return result
 }
