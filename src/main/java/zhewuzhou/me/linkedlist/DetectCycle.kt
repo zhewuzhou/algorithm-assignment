@@ -12,3 +12,22 @@ fun hasCycle(head: ListNode?): Boolean {
     }
     return false
 }
+
+fun detectCycle(head: ListNode?): ListNode? {
+    if (head?.next == null) return null
+    var slow = head
+    var fast = head
+    var cycleStart = head
+    while (slow != null || fast != null) {
+        slow = slow?.next
+        fast = fast?.next?.next
+        if (slow == fast) {
+            while (cycleStart != slow) {
+                cycleStart = cycleStart?.next
+                slow = slow?.next
+            }
+            return cycleStart
+        }
+    }
+    return null
+}
