@@ -9,7 +9,7 @@ import java.util.*
 internal class LeetCode136KtTest {
     private companion object {
         @JvmStatic
-        fun cases() = Arrays.stream(
+        fun twoCases() = Arrays.stream(
             arrayOf(
                 Pair(intArrayOf(2, 2, 1), 1),
                 Pair(intArrayOf(0), 0),
@@ -17,11 +17,25 @@ internal class LeetCode136KtTest {
                 Pair(intArrayOf(4, 1, 2, 1, 2), 4)
             )
         )
+
+        @JvmStatic
+        fun threeCase() = Arrays.stream(
+            arrayOf(
+                Pair(intArrayOf(2, 2, 1, 2), 1),
+                Pair(intArrayOf(0, 1, 0, 1, 0, 1, 99), 99)
+            )
+        )
     }
 
     @ParameterizedTest
-    @MethodSource("cases")
+    @MethodSource("twoCases")
     fun `Should find the single number`(case: Pair<IntArray, Int>) {
+        assertThat(singleNumberTwo(case.first), `is`(case.second))
+    }
+
+    @ParameterizedTest
+    @MethodSource("threeCase")
+    fun `Should find the single number in three number list`(case: Pair<IntArray, Int>) {
         assertThat(singleNumber(case.first), `is`(case.second))
     }
 }
