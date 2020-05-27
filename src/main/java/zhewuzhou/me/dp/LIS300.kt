@@ -1,11 +1,26 @@
 package zhewuzhou.me.dp
 
-fun lengthOfLIS(nums: IntArray): Int {
+import java.util.*
+
+fun lengthOfLISDP(nums: IntArray): Int {
     return when (nums.size) {
         0 -> 0
         1 -> 1
         else -> calculateLIS(nums)
     }
+}
+
+//Patience Sort, the card game
+fun lengthOfLIS(nums: IntArray): Int {
+    val pilesTop = IntArray(nums.size)
+    var numOfPiles = 0
+    for (n in nums) {
+        var result = Arrays.binarySearch(pilesTop, 0, numOfPiles, n)
+        result = if (result < 0) Math.abs(result + 1) else result
+        pilesTop[result] = n
+        numOfPiles = if (result == numOfPiles) numOfPiles + 1 else numOfPiles
+    }
+    return numOfPiles
 }
 
 private fun calculateLIS(nums: IntArray): Int {
