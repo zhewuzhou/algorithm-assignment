@@ -45,3 +45,16 @@ fun merge(l1: ListNode?, l2: ListNode?): ListNode? {
     }
     return l1
 }
+
+fun deleteDuplicates(head: ListNode?): ListNode? {
+    if (head?.next == null) return head
+    var cur = head
+    while (cur != null) {
+        val sectionHead = cur
+        while (cur.next?.`val` == sectionHead.`val`) {
+            cur.next = cur.next?.next
+        }
+        cur = cur.next
+    }
+    return head
+}
