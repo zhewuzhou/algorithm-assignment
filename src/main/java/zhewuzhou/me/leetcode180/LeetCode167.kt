@@ -3,12 +3,12 @@ package zhewuzhou.me.leetcode180
 import java.util.*
 
 fun twoSumSlow(nums: IntArray, target: Int): IntArray {
-    if (nums[0] > 0) {
+    return if (nums[0] > 0) {
         var toIndex = Arrays.binarySearch(nums, 0, nums.size, target)
         toIndex = if (toIndex < 0) Math.abs(toIndex + 1) else toIndex
-        return twoSumInRange(nums, target, toIndex)
+        twoSumInRange(nums, target, toIndex)
     } else {
-        return twoSumInRange(nums, target, nums.size)
+        twoSumInRange(nums, target, nums.size)
     }
 }
 
