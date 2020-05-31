@@ -27,6 +27,7 @@ fun inorderTraversal(root: TreeNode?): List<Int>? {
     var p = root
     while (!stack.isEmpty() || p != null) {
         p = if (p != null) {
+
             stack.push(p)
             p.left
         } else {
