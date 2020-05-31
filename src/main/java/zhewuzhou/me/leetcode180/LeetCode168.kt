@@ -17,3 +17,14 @@ fun convertToTitle(n: Int): String {
 private fun calculateChar(n: Int) =
     if (n % 26 == 0) 'Z' else '@' + n % 26
 
+fun titleToNumber(s: String): Int {
+    if (s.isEmpty() || !s.all { it in 'A'..'Z' }) return 0
+    var result = 0
+    var multiple = 1
+    for (i in s.lastIndex downTo 0) {
+        result += (s[i] - '@') * multiple
+        multiple *= 26
+    }
+    return result
+}
+

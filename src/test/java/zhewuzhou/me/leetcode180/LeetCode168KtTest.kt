@@ -32,4 +32,10 @@ internal class LeetCode168KtTest {
     fun `Should return the correct column header based on int`(case: Pair<Int, String>) {
         assertThat(convertToTitle(case.first), `is`(case.second))
     }
+
+    @ParameterizedTest
+    @MethodSource("cases")
+    fun `Should convert tile to number`(case: Pair<Int, String>) {
+        assertThat(titleToNumber(case.second), `is`(case.first))
+    }
 }
