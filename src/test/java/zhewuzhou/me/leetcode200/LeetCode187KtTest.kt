@@ -2,7 +2,6 @@ package zhewuzhou.me.leetcode200
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
@@ -21,13 +20,5 @@ internal class LeetCode187KtTest {
     @MethodSource("cases")
     fun `Should find the repeated DNA sequences`(case: Pair<String, List<String>>) {
         assertThat(findRepeatedDnaSequences(case.first), `is`(case.second))
-    }
-
-    @Test
-    fun `Should generate valid key`() {
-        repeat(10) {
-            assertThat(calculateKey("AAAAACCCCC"), `is`(349184))
-            assertThat(calculateDNA(349184), `is`("AAAAACCCCC"))
-        }
     }
 }
