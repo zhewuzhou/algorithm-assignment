@@ -1,6 +1,6 @@
 package zhewuzhou.me.leetcode220
 
-fun countPrimes(n: Int): Int {
+fun countPrimesSlow(n: Int): Int {
     val l = (2 until n).toMutableSet()
     var start = 2
     while (start < n) {
@@ -23,4 +23,20 @@ private fun isPrime(n: Int): Boolean {
         if (n % i == 0) return false
     }
     return true
+}
+
+fun countPrimes(n: Int): Int {
+    val notPrime = BooleanArray(n)
+    var count = 0
+    for (i in 2 until n) {
+        if (!notPrime[i]) {
+            count++
+            var j = 2
+            while (i * j < n) {
+                notPrime[i * j] = true
+                j++
+            }
+        }
+    }
+    return count
 }
