@@ -1,5 +1,7 @@
 package zhewuzhou.me.leetcode220
 
+import java.util.*
+
 
 data class DirectedGraph(val V: Int) {
     private var E = 0
@@ -31,12 +33,17 @@ fun canFinish(numCourses: Int, prerequisites: Array<IntArray>): Boolean {
     for (e in prerequisites) {
         g.addEdge(e[1], e[0])
     }
-    if (hasCycle(g, numCourses)) return false
+    if (hasCycle(g)) return false
     return true
 
 }
 
-private fun hasCycle(g: DirectedGraph, numCourses: Int): Boolean {
+private fun hasCycle(g: DirectedGraph): Boolean {
+    fun moveVertex(v: Int, source: MutableSet<Int>, dest: MutableSet<Int>) {
+        source.remove(v)
+        dest.add(v)
+    }
+
     fun dfs(v: Int, white: MutableSet<Int>, gray: MutableSet<Int>, black: MutableSet<Int>): Boolean {
         moveVertex(v, white, gray)
         for (n in g.adj(v)) {
@@ -54,7 +61,7 @@ private fun hasCycle(g: DirectedGraph, numCourses: Int): Boolean {
         return false
     }
 
-    val white = mutableSetOf(*(0 until numCourses).toList().toTypedArray())
+    val white = mutableSetOf(*(0 until g.V).toList().toTypedArray())
     val black = mutableSetOf<Int>()
     val gray = mutableSetOf<Int>()
     while (white.isNotEmpty()) {
@@ -65,7 +72,29 @@ private fun hasCycle(g: DirectedGraph, numCourses: Int): Boolean {
     return false
 }
 
-private fun moveVertex(v: Int, source: MutableSet<Int>, dest: MutableSet<Int>) {
-    source.remove(v)
-    dest.add(v)
+fun findOrder(numCourses: Int, prerequisites: Array<IntArray>): IntArray {
+    if (numCourses < 1) return intArrayOf()
+    val g = DirectedGraph(numCourses)
+    for (e in prerequisites) {
+        g.addEdge(e[1], e[0])
+    }
+    val queue = LinkedList<Int>()
+    val order = LinkedList<Int>()
+    val inDegree = IntArray(numCourses)
+    for (v in 0 until numCourses) {
+        if (g.indegree(v) == 0) queue.add(v)
+        inDegree[v] = g.indegree(v)
+    }
+
+    while (queue.isNotEmpty()) {
+        val v = queue.pop()
+        for (n in g.adj(v)) {
+            inDegree[n] -= 1
+            if (inDegree[n] == 0) {
+                queue.add(n)
+            }
+        }
+        order.add(v)
+    }
+    return if (order.size < numCourses) intArrayOf() else order.toIntArray()
 }
