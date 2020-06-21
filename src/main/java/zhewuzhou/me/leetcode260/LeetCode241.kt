@@ -36,7 +36,7 @@ fun diffWaysToCompute(input: String): List<Int> {
         val res = mutableListOf<Int>()
         for (i in s.indices) {
             when {
-                s[i] in listOf('+', '-', '*') -> {
+                operations.containsKey(s[i]) -> {
                     val lr = doCompute(s.substring(0, i), curOpCount)
                     val rr = doCompute(s.substring(i + 1), ops - curOpCount - 1)
                     res.addAll(lr.flatMap { l -> rr.map { operations[s[i]]!!(l, it) } })
