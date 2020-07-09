@@ -6,6 +6,12 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
 
+/*
+1. Is valid could be cached
+2. Should be able to stop when:
+   a. knowing that can not be valid again such as path is ())
+   b. knowing even if the left char all good still can not compare to current last length
+ */
 internal class RemoveInvalidParenthes301KtTest {
     private companion object {
         @JvmStatic
