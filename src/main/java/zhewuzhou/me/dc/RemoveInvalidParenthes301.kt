@@ -3,15 +3,27 @@ package zhewuzhou.me.dc
 import java.util.*
 
 fun removeInvalidParentheses(s: String): List<String> {
-    val res = mutableSetOf<String>()
+    if (s.isEmpty()) return listOf("")
+    if (!s.contains('(') && !s.contains(')')) return listOf(s)
+    val res = TreeMap<Int, MutableSet<String>>()
+    res[0] = mutableSetOf("")
     doSearch(res, mutableListOf(), s, 0)
-    val maxLength = res.maxBy { it.length }?.length!!
-    return res.filter { it.length == maxLength }
+    return res[res.lastKey()]!!.toList()
 }
 
-private fun doSearch(res: MutableSet<String>, path: MutableList<Char>, s: String, start: Int) {
-    if (isValidParentheses(path)) res.add(path.joinToString(""))
-    if (start == s.length) {
+private fun doSearch(res: TreeMap<Int, MutableSet<String>>, path: MutableList<Char>, s: String, start: Int) {
+    val curMaxLength = res.lastKey()
+    if (isValidParentheses(path) && path.size >= curMaxLength) {
+        if (res.containsKey(path.size)) {
+            res[path.size]!!.add(path.joinToString(""))
+        } else {
+            res[path.size] = mutableSetOf(path.joinToString(""))
+        }
+    }
+    if (start == s.length ||
+        s.length - start + path.size < curMaxLength ||
+        path.isNotEmpty() && path.last() == ')' && isValidBefore(path)
+    ) {
         return
     }
     for (i in start..s.lastIndex) {
@@ -28,6 +40,18 @@ fun isValidParentheses(parentheses: List<Char>): Boolean {
             s.pop()
         } else if (p == ')' || p == '(') {
             s.push(p)
+        }
+    }
+    return s.isEmpty()
+}
+
+fun isValidBefore(parentheses: List<Char>): Boolean {
+    val s = Stack<Char>()
+    for (i in 0 until parentheses.lastIndex) {
+        if (s.isNotEmpty() && s.peek() == '(' && parentheses[i] == ')') {
+            s.pop()
+        } else if (parentheses[i] == ')' || parentheses[i] == '(') {
+            s.push(parentheses[i])
         }
     }
     return s.isEmpty()
