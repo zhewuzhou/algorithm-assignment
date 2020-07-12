@@ -2,7 +2,8 @@ package zhewuzhou.me.dc
 
 import java.util.*
 
-fun removeInvalidParentheses(s: String): List<String> {
+
+fun removeInvalidParenthesesSlow(s: String): List<String> {
     if (s.isEmpty()) return listOf("")
     if (!s.contains('(') && !s.contains(')')) return listOf(s)
     val res = TreeMap<Int, MutableSet<String>>()
@@ -55,4 +56,33 @@ fun isValidBefore(parentheses: List<Char>): Boolean {
         }
     }
     return s.isEmpty()
+}
+
+
+fun removeInvalidParentheses(s: String): List<String> {
+    val res = mutableListOf<String>()
+    val check = charArrayOf('(', ')')
+    backtrace(s, res, check, 0, 0)
+    return res
+}
+
+fun backtrace(s: String, res: MutableList<String>, check: CharArray, invalidPos: Int, removePos: Int) {
+    var count = 0
+    var i = invalidPos
+    while (i < s.length && count >= 0) {
+        if (s[i] == check[0]) count++
+        if (s[i] == check[1]) count--
+        i++
+    }
+    if (count >= 0) {
+        val reversed = StringBuffer(s).reverse().toString()
+        if (check[0] == '(') backtrace(reversed, res, charArrayOf(')', '('), 0, 0) else res.add(reversed)
+    } else {
+        i -= 1
+        for (j in removePos..i) {
+            if (s[j] == check[1] && (j == removePos || s[j - 1] != check[1])) {
+                backtrace(s.substring(0, j) + s.substring(j + 1, s.length), res, check, i, j)
+            }
+        }
+    }
 }

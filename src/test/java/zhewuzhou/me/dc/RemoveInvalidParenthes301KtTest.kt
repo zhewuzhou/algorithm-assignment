@@ -11,12 +11,13 @@ internal class RemoveInvalidParenthes301KtTest {
         @JvmStatic
         fun cases() = Arrays.stream(
             arrayOf(
-                Pair("()())()", listOf("()()()", "(())()")),
-                Pair("())", listOf("()")),
-                Pair("(a)())()", listOf("(a)()()", "(a())()")),
-                Pair("", listOf("")),
-                Pair(")(", listOf("")),
-                Pair("n", listOf("n"))
+//                Pair("())", listOf("()")),
+//                Pair("(a)())()", listOf("(a)()()", "(a())()")),
+//                Pair("", listOf("")),
+//                Pair(")(", listOf("")),
+//                Pair("n", listOf("n")),
+//                Pair("))))))))))))))))", listOf("")),
+                Pair("()())()", listOf("()()()", "(())()"))
             )
         )
     }
