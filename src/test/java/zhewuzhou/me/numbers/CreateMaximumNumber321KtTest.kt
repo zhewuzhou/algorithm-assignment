@@ -1,4 +1,4 @@
-package zhewuzhou.me.dc
+package zhewuzhou.me.numbers
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

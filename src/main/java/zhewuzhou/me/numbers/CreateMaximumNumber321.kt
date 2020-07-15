@@ -1,4 +1,4 @@
-package zhewuzhou.me.dc
+package zhewuzhou.me.numbers
 
 fun maxNumber(nums1: IntArray, nums2: IntArray, k: Int): IntArray {
     var lhs = nums1
