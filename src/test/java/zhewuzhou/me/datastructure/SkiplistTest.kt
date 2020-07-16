@@ -11,7 +11,6 @@ internal class SkiplistTest {
         for (i in 1..1000) {
             skiplist.add(i)
         }
-        skiplist.printLevels()
         assertThat(skiplist.search(0), `is`(false))
         assertThat(skiplist.search(1), `is`(true))
         assertThat(skiplist.search(999), `is`(true))
