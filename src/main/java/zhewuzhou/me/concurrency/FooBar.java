@@ -2,63 +2,45 @@ package zhewuzhou.me.concurrency;
 
 
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static java.util.List.of;
 
 public class FooBar {
     private int n;
-    private Lock lock = new ReentrantLock();
-    private Boolean fooTurn = true;
-
-    private Condition fooCond = lock.newCondition();
-    private Condition barCond = lock.newCondition();
+    private volatile Boolean fooTurn = true;
 
     public FooBar(int n) {
         this.n = n;
     }
 
     public void foo(Runnable printFoo) throws InterruptedException {
-
         for (int i = 0; i < n; i++) {
-            try {
-                lock.lock();
-                while (!fooTurn) {
-                    fooCond.await();
+            while (true) {
+                if (fooTurn) {
+                    printFoo.run();
+                    fooTurn = false;
+                    break;
                 }
-                // printFoo.run() outputs "foo". Do not change or remove this line.
-                printFoo.run();
-                fooTurn = false;
-                barCond.signalAll();
-            } finally {
-                lock.unlock();
+                Thread.sleep(1);
             }
-
         }
     }
 
     public void bar(Runnable printBar) throws InterruptedException {
-
         for (int i = 0; i < n; i++) {
-            try {
-                lock.lock();
-                while (fooTurn) {
-                    barCond.await();
+            while (true) {
+                if (!fooTurn) {
+                    printBar.run();
+                    fooTurn = true;
+                    break;
                 }
-                // printBar.run() outputs "bar". Do not change or remove this line.
-                printBar.run();
-                fooTurn = true;
-                fooCond.signalAll();
-            } finally {
-                lock.unlock();
+                Thread.sleep(1);
             }
         }
     }
 
     public static void main(String[] args) throws InterruptedException {
-        FooBar foobar = new FooBar(20);
+        FooBar foobar = new FooBar(10);
         Thread foo = new Thread(() -> {
             try {
                 foobar.foo(() -> System.out.println("foo"));
