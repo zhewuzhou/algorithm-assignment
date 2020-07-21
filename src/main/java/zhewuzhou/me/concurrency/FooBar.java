@@ -7,7 +7,7 @@ import static java.util.List.of;
 
 public class FooBar {
     private int n;
-    private volatile Boolean fooTurn = true;
+    private Boolean fooTurn = true;
 
     public FooBar(int n) {
         this.n = n;
@@ -15,26 +15,26 @@ public class FooBar {
 
     public void foo(Runnable printFoo) throws InterruptedException {
         for (int i = 0; i < n; i++) {
-            while (true) {
-                if (fooTurn) {
-                    printFoo.run();
-                    fooTurn = false;
-                    break;
+            synchronized (this) {
+                if (!fooTurn) {
+                    this.wait();
                 }
-                Thread.sleep(1);
+                printFoo.run();
+                fooTurn = false;
+                this.notifyAll();
             }
         }
     }
 
     public void bar(Runnable printBar) throws InterruptedException {
         for (int i = 0; i < n; i++) {
-            while (true) {
-                if (!fooTurn) {
-                    printBar.run();
-                    fooTurn = true;
-                    break;
+            synchronized (this) {
+                if (fooTurn) {
+                    this.wait();
                 }
-                Thread.sleep(1);
+                printBar.run();
+                fooTurn = true;
+                this.notifyAll();
             }
         }
     }
