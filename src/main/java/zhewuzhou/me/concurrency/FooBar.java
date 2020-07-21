@@ -2,12 +2,14 @@ package zhewuzhou.me.concurrency;
 
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.List.of;
 
 public class FooBar {
     private int n;
-    private Boolean fooTurn = true;
+    private AtomicBoolean fooTurn = new AtomicBoolean(true);
+    private AtomicBoolean barTurn = new AtomicBoolean(false);
 
     public FooBar(int n) {
         this.n = n;
@@ -15,27 +17,21 @@ public class FooBar {
 
     public void foo(Runnable printFoo) throws InterruptedException {
         for (int i = 0; i < n; i++) {
-            synchronized (this) {
-                if (!fooTurn) {
-                    this.wait();
-                }
-                printFoo.run();
-                fooTurn = false;
-                this.notifyAll();
+            while (!fooTurn.compareAndSet(true, false)) {
+                Thread.sleep(1);
             }
+            printFoo.run();
+            barTurn.set(true);
         }
     }
 
     public void bar(Runnable printBar) throws InterruptedException {
         for (int i = 0; i < n; i++) {
-            synchronized (this) {
-                if (fooTurn) {
-                    this.wait();
-                }
-                printBar.run();
-                fooTurn = true;
-                this.notifyAll();
+            while (!barTurn.compareAndSet(true, false)) {
+                Thread.sleep(1);
             }
+            printBar.run();
+            fooTurn.set(true);
         }
     }
 
