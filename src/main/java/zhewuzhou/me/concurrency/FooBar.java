@@ -36,7 +36,7 @@ public class FooBar {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        FooBar foobar = new FooBar(10);
+        FooBarSemaphore foobar = new FooBarSemaphore(2);
         Thread foo = new Thread(() -> {
             try {
                 foobar.foo(() -> System.out.println("foo"));
