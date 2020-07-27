@@ -57,7 +57,7 @@ public class ZeroEvenOdd {
     }
 
     public static void main(String[] args) {
-        ZeroEvenOdd zeroEvenOdd = new ZeroEvenOdd(11);
+        ZeroEvenOddSemaphore zeroEvenOdd = new ZeroEvenOddSemaphore(11);
         Thread t1 = new Thread(() -> {
             try {
                 zeroEvenOdd.zero(System.out::println);
